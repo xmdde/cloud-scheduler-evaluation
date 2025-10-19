@@ -1,7 +1,8 @@
 #include <iostream>
 
+#include "node.h"
+
 int main(int argc, const char* argv[]) {
-    std::cout << "test\n";
 
     return 0;
 }

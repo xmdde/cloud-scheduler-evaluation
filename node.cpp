@@ -10,12 +10,17 @@ bool Node::canRun(const Task& t) const {
 
 void Node::assignTask(const Task& t, const double current_time) {
     if (mode == Mode::SLOT) {
-        used_CPU += t.cpu_required;
-        used_RAM += t.ram_required;
-        running.push_back({t, current_time + t.duration});
-    } else {
-        // w trybie kolejkowym — jeśli wolny, uruchom, inaczej kolejkuj
-        if (running.empty()) {
+        if (canRun(t)) {
+            used_CPU += t.cpu_required;
+            used_RAM += t.ram_required;
+            running.push_back({t, current_time + t.duration});
+        } else {
+            std::cerr << "|Node " << id << "| Not enough resources for task " << t.id << "\n";
+        }
+    } else { // Mode::QUEUE
+        if (running.empty() && canRun(t)) {
+            // used_CPU += t.cpu_required;
+            // used_RAM += t.ram_required;
             running.push_back({t, current_time + t.duration});
         } else {
             queue.push(t);
@@ -24,7 +29,7 @@ void Node::assignTask(const Task& t, const double current_time) {
 }
 
 void Node::finishTask(const Task& t) {
-    if (mode == Mode::SLOT) {
+    if (mode == Mode::SLOT) {  // ?
         used_CPU -= t.cpu_required;
         used_RAM -= t.ram_required;
     }
@@ -38,7 +43,7 @@ void Node::update(const double current_time) {
             it = running.erase(it);
 
             // if in QUEUE mode, start next task
-            if (mode == Mode::QUEUE && !queue.empty()) {
+            if (mode == Mode::QUEUE && !queue.empty()) {  // ? running.empty()
                 Task next = queue.front();
                 queue.pop();
                 running.push_back({next, current_time + next.duration});

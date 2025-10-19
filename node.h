@@ -2,6 +2,8 @@
 #define CLOUD_SCHEDULER_EVALUATION_NODE_H
 
 #include <queue>
+#include <iostream>
+
 #include "task.h"
 
 enum class Mode { SLOT, QUEUE };
@@ -23,6 +25,9 @@ class Node {
     std::queue<Task> queue;  // used only in QUEUE mode, change to pointer?
 
 public:
+    Node(int id_, double cpu, double ram, Mode m)
+        : id(id_), total_CPU(cpu), total_RAM(ram), mode(m) {}
+
     bool canRun(const Task& t) const;
     void assignTask(const Task& t, const double current_time);
     void finishTask(const Task& t);
