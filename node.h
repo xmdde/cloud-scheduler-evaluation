@@ -14,17 +14,18 @@ struct RunningTask {
 };
 
 class Node {
-    int id;
     double total_CPU;
     double total_RAM;
-    double used_CPU = 0;
-    double used_RAM = 0;
     Mode mode;
 
     std::vector<RunningTask> running;
     std::queue<Task> queue;  // used only in QUEUE mode, change to pointer?
 
 public:
+    int id;
+    double used_CPU = 0;
+    double used_RAM = 0;
+
     Node(int id_, double cpu, double ram, Mode m)
         : id(id_), total_CPU(cpu), total_RAM(ram), mode(m) {}
 
@@ -35,6 +36,10 @@ public:
 
     bool isIdle() const {
         return running.empty() && queue.empty();
+    }
+
+    size_t getRunningNum() const {
+        return running.size();
     }
 };
 
