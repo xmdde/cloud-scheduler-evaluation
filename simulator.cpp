@@ -17,7 +17,8 @@ void Simulator::run(std::vector<Task> tasks) {
     std::cout << "Running " << scheduler->getName() << "...\n";
 
     for (current_time = 0; current_time <= end_time; current_time += time_step) {
-        while (nextTaskIndex < tasks.size() && tasks[nextTaskIndex].arrival_time <= current_time) {                scheduler->scheduleTask(tasks[nextTaskIndex], nodes, current_time);
+        while (nextTaskIndex < tasks.size() && tasks[nextTaskIndex].arrival_time <= current_time) {
+            scheduler->scheduleTask(tasks[nextTaskIndex], nodes, current_time);
             nextTaskIndex++;
         }
 

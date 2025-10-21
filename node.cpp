@@ -19,8 +19,8 @@ void Node::assignTask(const Task& t, const double current_time) {
         }
     } else { // Mode::QUEUE
         if (running.empty() && canRun(t)) {
-            // used_CPU += t.cpu_required;
-            // used_RAM += t.ram_required;
+            used_CPU += t.cpu_required;
+            used_RAM += t.ram_required;
             running.push_back({t, current_time + t.duration});
         } else {
             queue.push(t);
@@ -29,23 +29,31 @@ void Node::assignTask(const Task& t, const double current_time) {
 }
 
 void Node::finishTask(const Task& t) {
-    if (mode == Mode::SLOT) {  // ?
-        used_CPU -= t.cpu_required;
-        used_RAM -= t.ram_required;
+    used_CPU -= t.cpu_required;
+    used_RAM -= t.ram_required;
+
+    if (used_RAM < 0) {
+        used_RAM = 0;
+    }
+    if (used_CPU < 0) {
+        used_CPU = 0;
     }
 }
 
-void Node::update(const double current_time) {
+
+void Node::update(double current_time) {
     auto it = running.begin();
     while (it != running.end()) {
         if (it->finish_time <= current_time) {
             finishTask(it->task);
             it = running.erase(it);
 
-            // if in QUEUE mode, start next task
-            if (mode == Mode::QUEUE && !queue.empty()) {  // ? running.empty()
+            // w trybie QUEUE: uruchom następny tylko, gdy node jest pusty
+            if (mode == Mode::QUEUE && running.empty() && !queue.empty()) {
                 Task next = queue.front();
                 queue.pop();
+                used_CPU += next.cpu_required;
+                used_RAM += next.ram_required;
                 running.push_back({next, current_time + next.duration});
             }
         } else {
