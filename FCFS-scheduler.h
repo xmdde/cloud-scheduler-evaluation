@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CLOUD_SCHEDULER_EVALUATION_FCFS_SCHEDULER_H
+#define CLOUD_SCHEDULER_EVALUATION_FCFS_SCHEDULER_H
 
 #include <vector>
 #include <queue>
@@ -9,7 +10,7 @@
 
 class FCFSScheduler : public Scheduler {
 public:
-    std::queue<Task> queue;  // pamiętamy o zaległych zadaniach
+    std::queue<Task> queue;
 
     std::string getName() const override {
         return "FCFS";
@@ -45,3 +46,5 @@ public:
         queue = std::move(remaining);
     }
 };
+
+#endif  // CLOUD_SCHEDULER_EVALUATION_FCFS_SCHEDULER_H

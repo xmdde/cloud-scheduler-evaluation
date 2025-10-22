@@ -17,7 +17,7 @@ void Node::assignTask(const Task& t, const double current_time) {
         } else {
             std::cerr << "|Node " << id << "| Not enough resources for task " << t.id << "\n";
         }
-    } else { // Mode::QUEUE
+    } else {  // Mode::QUEUE
         if (running.empty() && canRun(t)) {
             used_CPU += t.cpu_required;
             used_RAM += t.ram_required;

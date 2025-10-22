@@ -4,7 +4,7 @@
 #include "node.h"
 #include "workload-generator.h"
 #include "simulator.h"
-#include "FCFS_scheduler.h"
+#include "FCFS-scheduler.h"
 
 int main(int argc, const char* argv[]) {
     WorkloadGenerator gen;
@@ -14,7 +14,7 @@ int main(int argc, const char* argv[]) {
         DistributionType::NORMAL,
         1.0, 0.3,   // CPU mean, std
         2.0, 0.5,   // RAM mean, std
-        10.0, 2.0, // Duration mean, std  // was 30, 10
+        10.0, 2.0,  // Duration mean, std  // was 30, 10
         1.0         // Arrival rate
     );
 
@@ -30,7 +30,7 @@ int main(int argc, const char* argv[]) {
     }
     
     Simulator sim(new FCFSScheduler(), Mode::SLOT, 3, 20.0);
-    sim.run(tasks);
+    sim.run(tasks, "output/simulation_log.csv");
 
     return 0;
 }
