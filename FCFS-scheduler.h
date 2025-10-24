@@ -9,20 +9,17 @@
 #include "task.h"
 
 class FCFSScheduler : public Scheduler {
-public:
     std::queue<Task> queue;
 
+public:
     std::string getName() const override {
         return "FCFS";
     }
 
     void scheduleTask(const Task& new_task, std::vector<Node>& nodes, double current_time) override {
-        // 1. dodaj nowe zadanie do kolejki (bo FCFS)
         queue.push(new_task);
 
-        // 2. spróbuj przydzielić zadania z kolejki po kolei
         std::queue<Task> remaining;
-
         while (!queue.empty()) {
             Task t = queue.front();
             queue.pop();
@@ -37,12 +34,10 @@ public:
             }
 
             if (!assigned) {
-                // brak wolnych zasobów — zostaje w kolejce
                 remaining.push(t);
             }
         }
 
-        // 3. zaktualizuj kolejkę
         queue = std::move(remaining);
     }
 };

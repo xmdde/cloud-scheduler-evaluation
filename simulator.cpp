@@ -2,25 +2,26 @@
 
 #include <fstream>
 #include <iomanip>
+#include <memory>
 
-Simulator::Simulator(Scheduler* sched, Mode mode, int nodes_num, double sim_end)
-    : scheduler(sched), end_time(sim_end) {
+Simulator::Simulator(std::unique_ptr<Scheduler> sched, Mode mode, int nodes_num, double sim_end)
+    : scheduler(std::move(sched)), end_time(sim_end) {
     for (int i = 0; i < nodes_num; ++i) {
         nodes.push_back({i, 8, 16, mode});
     }
 }
 
-void Simulator::run(std::vector<Task> tasks, const std::string& file_path) {
+void Simulator::run(std::vector<Task>& tasks, const std::string& file_path) {
     std::ofstream log(file_path);
     log << "time,nodeId,usedCPU,usedRAM,numRunning\n";
 
-    size_t nextTaskIndex = 0;
+    size_t next_idx = 0;
     std::cout << "Running " << scheduler->getName() << "...\n";
 
     for (current_time = 0; current_time <= end_time; current_time += time_step) {
-        while (nextTaskIndex < tasks.size() && tasks[nextTaskIndex].arrival_time <= current_time) {
-            scheduler->scheduleTask(tasks[nextTaskIndex], nodes, current_time);
-            nextTaskIndex++;
+        while (next_idx < tasks.size() && tasks[next_idx].arrival_time <= current_time) {
+            scheduler->scheduleTask(tasks[next_idx], nodes, current_time);
+            ++next_idx;
         }
 
         for (auto& node : nodes) {
