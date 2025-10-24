@@ -14,15 +14,15 @@ struct RunningTask {
 };
 
 class Node {
-    double total_CPU;
-    double total_RAM;
-    Mode mode;
+    const Mode mode;
 
     std::vector<RunningTask> running;
     std::queue<Task> queue;  // used only in QUEUE mode, change to pointer?
 
 public:
-    int id;
+    const int id;
+    double total_CPU;
+    double total_RAM;
     double used_CPU = 0;
     double used_RAM = 0;
 

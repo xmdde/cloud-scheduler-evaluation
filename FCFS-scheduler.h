@@ -16,7 +16,7 @@ public:
         return "FCFS";
     }
 
-    void scheduleTask(const Task& new_task, std::vector<Node>& nodes, double current_time) override {
+    void scheduleTask(const Task new_task, std::vector<Node>& nodes, double current_time) override {
         queue.push(new_task);
 
         std::queue<Task> remaining;

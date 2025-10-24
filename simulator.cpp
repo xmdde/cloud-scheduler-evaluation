@@ -12,13 +12,14 @@ Simulator::Simulator(std::unique_ptr<Scheduler> sched, Mode mode, int nodes_num,
 }
 
 void Simulator::run(std::vector<Task>& tasks, const std::string& file_path) {
+    std::cout << "Running " << scheduler->getName() << "...\n";
+
     std::ofstream log(file_path);
     log << "time,nodeId,usedCPU,usedRAM,numRunning\n";
 
     size_t next_idx = 0;
-    std::cout << "Running " << scheduler->getName() << "...\n";
-
-    for (current_time = 0; current_time <= end_time; current_time += time_step) {
+    double current_time = 0.0;
+    while (next_idx < tasks.size() || !allTasksFinished()) {  // for (current_time; current_time <= end_time; current_time += time_step) {
         while (next_idx < tasks.size() && tasks[next_idx].arrival_time <= current_time) {
             scheduler->scheduleTask(tasks[next_idx], nodes, current_time);
             ++next_idx;
@@ -34,8 +35,22 @@ void Simulator::run(std::vector<Task>& tasks, const std::string& file_path) {
                 << node.used_CPU << "," << node.used_RAM << ","
                 << node.getRunningNum() << "\n";
         }
+
+        current_time += time_step;
     }
+
+    //std::cout << "next_idx=" << next_idx << ",\n";
+    std::cout << allTasksFinished();
 
     log.close();
     std::cout << "Simulation complete.\n";
+}
+
+bool Simulator::allTasksFinished() {
+    for (const auto& node : nodes) {
+        if (!node.isIdle()) {
+            return false;
+        }
+    }
+    return true;
 }

@@ -9,9 +9,10 @@
 class Simulator {
     std::vector<Node> nodes;
     std::unique_ptr<Scheduler> scheduler;
-    double current_time = 0.0;
     const double time_step = 1.0;
     double end_time;
+
+    bool allTasksFinished();
 
 public:
     Simulator(std::unique_ptr<Scheduler> sched, Mode mode, int nodes_num, double sim_end);
