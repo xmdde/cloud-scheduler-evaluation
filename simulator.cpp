@@ -19,7 +19,7 @@ void Simulator::run(std::vector<Task>& tasks, const std::string& file_path) {
 
     size_t next_idx = 0;
     double current_time = 0.0;
-    while (next_idx < tasks.size() || !allTasksFinished()) {  // for (current_time; current_time <= end_time; current_time += time_step) {
+    while (next_idx < tasks.size() || !allTasksFinished()) {
         while (next_idx < tasks.size() && tasks[next_idx].arrival_time <= current_time) {
             scheduler->scheduleTask(tasks[next_idx], nodes, current_time);
             ++next_idx;
@@ -38,9 +38,6 @@ void Simulator::run(std::vector<Task>& tasks, const std::string& file_path) {
 
         current_time += time_step;
     }
-
-    //std::cout << "next_idx=" << next_idx << ",\n";
-    std::cout << allTasksFinished();
 
     log.close();
     std::cout << "Simulation complete.\n";

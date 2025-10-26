@@ -1,5 +1,7 @@
 #include "node.h"
 
+#include "task.h"
+
 bool Node::canRun(const Task& t) const {
     if (mode == Mode::SLOT) {
         return (used_CPU + t.cpu_required <= total_CPU && used_RAM + t.ram_required <= total_RAM);
@@ -60,4 +62,9 @@ void Node::update(double current_time) {
             ++it;
         }
     }
+}
+
+double Node::calculateDeltaEnergy(const Task& t) const {
+    const int tmp_k = 75;
+    return tmp_k * t.cpu_required/total_CPU * t.duration;
 }
