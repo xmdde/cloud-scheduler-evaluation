@@ -4,10 +4,10 @@
 #include <iomanip>
 #include <memory>
 
-Simulator::Simulator(std::unique_ptr<Scheduler> sched, Mode mode, int nodes_num, double sim_end)
-    : scheduler(std::move(sched)), end_time(sim_end) {
+Simulator::Simulator(std::unique_ptr<Scheduler> sched, const Mode mode, int nodes_num)
+    : scheduler(std::move(sched)) {
     for (int i = 0; i < nodes_num; ++i) {
-        nodes.push_back({i, 8, 16, mode});
+        nodes.push_back({i, 4, 8, mode});  // 8, 16
     }
 }
 
@@ -41,6 +41,9 @@ void Simulator::run(std::vector<Task>& tasks, const std::string& file_path) {
 
     log.close();
     std::cout << "Simulation complete.\n";
+    for (const auto& node : nodes) {
+        std::cout << "|Node " << node.id << "| total energy: " << node.total_energy << '\n';
+    }
 }
 
 bool Simulator::allTasksFinished() {

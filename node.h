@@ -1,8 +1,8 @@
 #ifndef CLOUD_SCHEDULER_EVALUATION_NODE_H
 #define CLOUD_SCHEDULER_EVALUATION_NODE_H
 
-#include <queue>
 #include <iostream>
+#include <queue>
 
 #include "task.h"
 
@@ -11,6 +11,7 @@ enum class Mode { SLOT, QUEUE };
 struct RunningTask {
     Task task;
     double finish_time;
+    // double delta_energy;
 };
 
 class Node {

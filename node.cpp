@@ -31,6 +31,8 @@ void Node::assignTask(const Task& t, const double current_time) {
 }
 
 void Node::finishTask(const Task& t) {
+    total_energy += calculateDeltaEnergy(t);
+
     used_CPU -= t.cpu_required;
     used_RAM -= t.ram_required;
 
@@ -44,6 +46,9 @@ void Node::finishTask(const Task& t) {
 
 
 void Node::update(double current_time) {
+    // przy zalozeniu, ze zwiekszamy o time_step
+    total_energy += 75.0;  // [J]
+
     auto it = running.begin();
     while (it != running.end()) {
         if (it->finish_time <= current_time) {

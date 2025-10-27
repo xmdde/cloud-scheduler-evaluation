@@ -10,12 +10,11 @@ class Simulator {
     std::vector<Node> nodes;
     std::unique_ptr<Scheduler> scheduler;
     const double time_step = 1.0;
-    double end_time;
 
     bool allTasksFinished();
 
 public:
-    Simulator(std::unique_ptr<Scheduler> sched, Mode mode, int nodes_num, double sim_end);
+    Simulator(std::unique_ptr<Scheduler> sched, const Mode mode, int nodes_num);
     void run(std::vector<Task>& tasks, const std::string& file_path);
 };
 

@@ -6,6 +6,7 @@
 #include "workload-generator.h"
 #include "simulator.h"
 #include "FCFS-scheduler.h"
+#include "round-robin-scheduler.h"
 
 int main(int argc, const char* argv[]) {
     WorkloadGenerator gen;
@@ -29,7 +30,8 @@ int main(int argc, const char* argv[]) {
                   << t.duration << "\n";
     }
     
-    Simulator sim(std::make_unique<FCFSScheduler>(), Mode::SLOT, 3, 20.0);
+    //Simulator sim(std::make_unique<FCFSScheduler>(), Mode::SLOT, 3);
+    Simulator sim(std::make_unique<RoundRobinScheduler>(), Mode::QUEUE, 3);
     sim.run(tasks, "output/simulation_log.csv");
 
     return 0;
