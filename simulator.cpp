@@ -40,9 +40,9 @@ void Simulator::run(std::vector<Task>& tasks, const std::string& file_path) {
     }
 
     log.close();
-    std::cout << "Simulation complete.\n";
+    std::cout << "Simulation complete. Makespan: " << current_time - time_step << '\n';
     for (const auto& node : nodes) {
-        std::cout << "|Node " << node.id << "| total energy: " << node.total_energy << '\n';
+        std::cout << "|Node " << node.id << "| E = " << node.total_energy << '\n';
     }
 }
 

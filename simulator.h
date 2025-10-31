@@ -5,6 +5,7 @@
 #include <memory>
 
 #include "scheduler.h"
+#include "task.h"
 
 class Simulator {
     std::vector<Node> nodes;

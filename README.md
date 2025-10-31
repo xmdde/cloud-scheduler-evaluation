@@ -6,6 +6,6 @@
 - [ ] LoadAware (h)
 - [ ] MLScheduler
 - [ ] logger
-- [ ] fix setting the end of simulation/get makespan
+- [X] fix setting the end of simulation/get makespan
 - [ ] log training data
 - [ ] linear regression
