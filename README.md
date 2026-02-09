@@ -4,7 +4,7 @@
 - [ ] BestFit (h)
 - [ ] EnergyAware (h)
 - [ ] LoadAware (h)
-- [ ] MLScheduler
+- [ ] ML Scheduler
 - [ ] logger
 - [X] fix setting the end of simulation/get makespan
 - [ ] log training data

@@ -12,7 +12,7 @@ class Simulator {
     std::unique_ptr<Scheduler> scheduler;
     const double time_step = 1.0;
 
-    bool allTasksFinished();
+    bool allNodesIdle();
 
 public:
     Simulator(std::unique_ptr<Scheduler> sched, const Mode mode, int nodes_num);

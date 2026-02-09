@@ -9,14 +9,12 @@
 #include "task.h"
 
 class FCFSScheduler : public Scheduler {
-    std::queue<Task> queue;
-
 public:
     std::string getName() const override {
         return "FCFS";
     }
 
-    void scheduleTask(const Task& new_task, std::vector<Node>& nodes, double current_time) override;
+    bool scheduleTask(const Task& new_task, std::vector<Node>& nodes, double current_time) override;
 };
 
 #endif  // CLOUD_SCHEDULER_EVALUATION_FCFS_SCHEDULER_H

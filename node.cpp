@@ -10,55 +10,66 @@ bool Node::canRun(const Task& t) const {
     }
 }
 
-void Node::assignTask(const Task& t, const double current_time) {
+void Node::assignTask(const Task& t, double current_time) {
     if (mode == Mode::SLOT) {
         if (canRun(t)) {
             used_CPU += t.cpu_required;
             used_RAM += t.ram_required;
             running.push_back({t, current_time + t.duration});
         } else {
-            std::cerr << "|Node " << id << "| Not enough resources for task " << t.id << "\n";
+            std::cerr << "ERR: Node " << id << " overloaded in SLOT mode!\n";
         }
-    } else {  // Mode::QUEUE
-        if (running.empty() && canRun(t)) {
+    } else { 
+        if (running.empty()) {
             used_CPU += t.cpu_required;
             used_RAM += t.ram_required;
             running.push_back({t, current_time + t.duration});
         } else {
-            queue.push(t);
+            waiting_queue.push(t);
         }
     }
 }
 
-void Node::finishTask(const Task& t) {
-    total_energy += calculateDeltaEnergy(t);
-
-    used_CPU -= t.cpu_required;
-    used_RAM -= t.ram_required;
-
-    if (used_RAM < 0) {
-        used_RAM = 0;
+// [W]
+double Node::getInstantaneousPower() const {
+    if (used_CPU == 0) {
+        return P_IDLE;
+        // to think about 0.0?
     }
-    if (used_CPU < 0) {
-        used_CPU = 0;
+
+    // P(u) = k * P_max + (1-k) * P_max * u 
+    //      = P_idle + (P_max - P_idle) * utilization
+    double utilization = used_CPU / total_CPU;
+    if (utilization > 1.0) {
+        utilization = 1.0;
     }
+
+    return P_IDLE + (P_MAX - P_IDLE) * utilization;
 }
 
+void Node::tick(double current_time, double time_step) {
+    // 1. FIZYKA: Oblicz zużytą energię w tym kroku czasowym
+    // Energia [J] = Moc [W] * Czas [s]
+    double current_power = getInstantaneousPower();
+    total_energy_consumed += current_power * time_step;
 
-void Node::update(double current_time) {
-    // przy zalozeniu, ze zwiekszamy o time_step
-    total_energy += 75.0;  // [J]
-
+    // Check for finished tasks
     auto it = running.begin();
     while (it != running.end()) {
         if (it->finish_time <= current_time) {
-            finishTask(it->task);
+            used_CPU -= it->task.cpu_required;
+            used_RAM -= it->task.ram_required;
+
+            if (used_CPU < 0.001) used_CPU = 0.0;
+            if (used_RAM < 0.001) used_RAM = 0.0;
+
             it = running.erase(it);
 
-            // w trybie QUEUE: uruchom następny tylko, gdy node jest pusty
-            if (mode == Mode::QUEUE && running.empty() && !queue.empty()) {
-                Task next = queue.front();
-                queue.pop();
+            // Start the next task if in queue mode
+            if (mode == Mode::QUEUE && !waiting_queue.empty() && running.empty()) {
+                Task next = waiting_queue.front();
+                waiting_queue.pop();
+
                 used_CPU += next.cpu_required;
                 used_RAM += next.ram_required;
                 running.push_back({next, current_time + next.duration});
@@ -67,9 +78,4 @@ void Node::update(double current_time) {
             ++it;
         }
     }
-}
-
-double Node::calculateDeltaEnergy(const Task& t) const {
-    const int tmp_k = 75;
-    return tmp_k * t.cpu_required/total_CPU * t.duration;
 }
