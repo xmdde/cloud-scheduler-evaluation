@@ -1,5 +1,5 @@
-#ifndef CLOUD_SCHEDULER_EVALUATION_NODE_H
-#define CLOUD_SCHEDULER_EVALUATION_NODE_H
+#ifndef CLOUD_SCHEDULER_EVALUATION_HOST_H
+#define CLOUD_SCHEDULER_EVALUATION_HOST_H
 
 #include <iostream>
 #include <vector>
@@ -14,11 +14,11 @@ struct RunningTask {
     double finish_time;
 };
 
-class Node {
+class Host {
     const Mode mode;
 
     std::vector<RunningTask> running;
-    std::queue<Task> waiting_queue; // queue tasks if node is busy (QUEUE mode)
+    std::queue<Task> waiting_queue; // queue tasks if host is busy (QUEUE mode)
 
     const double P_IDLE = 75.0;
     const double P_MAX = 125.0;
@@ -32,7 +32,7 @@ public:
     double used_RAM = 0.0;
     double total_energy_consumed = 0.0;  // [J]
 
-    Node(int id_, double cpu, double ram, Mode m)
+    Host(int id_, double cpu, double ram, Mode m)
         : id(id_), total_CPU(cpu), total_RAM(ram), mode(m) {}
 
     bool canRun(const Task& t) const;
@@ -51,4 +51,4 @@ public:
     }
 };
 
-#endif  // CLOUD_SCHEDULER_EVALUATION_NODE_H
+#endif  // CLOUD_SCHEDULER_EVALUATION_HOST_H

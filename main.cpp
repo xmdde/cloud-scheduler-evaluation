@@ -1,7 +1,7 @@
 #include <iostream>
 #include <iomanip>
 
-#include "node.h"
+#include "host.h"
 #include "utils.h"
 #include "workload-generator.h"
 
@@ -27,8 +27,8 @@ int main(int argc, const char* argv[]) {
                   << t.duration << "\n";
     }
 
-    runSimulation(SchedulingMethod::ROUND_ROBIN, Mode::QUEUE, tasks, "output/simulation_log_RR.csv");
-    runSimulation(SchedulingMethod::FCFS, Mode::SLOT, tasks, "output/simulation_log_FCFS.csv");
+    runSimulation(SchedulingMethod::ROUND_ROBIN, Mode::QUEUE, tasks, "output/simulation-log-RR.csv");
+    runSimulation(SchedulingMethod::FCFS, Mode::SLOT, tasks, "output/simulation-log-FCFS.csv");
 
     return 0;
 }

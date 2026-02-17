@@ -15,7 +15,7 @@ void Simulator::run(std::vector<Task>& tasks, const std::string& file_path) {
     std::cout << "Running " << scheduler->getName() << "...\n";
 
     std::ofstream log(file_path);
-    log << "time,nodeId,usedCPU,usedRAM,numRunning,totalEnergy\n"; 
+    log << "time,hostId,usedCPU,usedRAM,numRunning,totalEnergy\n"; 
 
     size_t next_idx = 0;
     double current_time = 0.0;
@@ -60,7 +60,7 @@ void Simulator::run(std::vector<Task>& tasks, const std::string& file_path) {
     std::cout << "Simulation complete. Makespan: " << current_time - time_step << '\n';
     double total_system_energy = 0.0;
     for (const auto& node : nodes) {
-        std::cout << "|Node " << node.id << "| E = " << node.total_energy_consumed << " J\n";
+        std::cout << "|Host " << node.id << "| E = " << node.total_energy_consumed << " J\n";
         total_system_energy += node.total_energy_consumed;
     }
     std::cout << "Total System Energy: " << total_system_energy << " J\n";

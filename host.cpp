@@ -1,8 +1,8 @@
-#include "node.h"
+#include "host.h"
 
 #include "task.h"
 
-bool Node::canRun(const Task& t) const {
+bool Host::canRun(const Task& t) const {
     if (mode == Mode::SLOT) {
         return (used_CPU + t.cpu_required <= total_CPU && used_RAM + t.ram_required <= total_RAM);
     } else {
@@ -10,14 +10,14 @@ bool Node::canRun(const Task& t) const {
     }
 }
 
-void Node::assignTask(const Task& t, double current_time) {
+void Host::assignTask(const Task& t, double current_time) {
     if (mode == Mode::SLOT) {
         if (canRun(t)) {
             used_CPU += t.cpu_required;
             used_RAM += t.ram_required;
             running.push_back({t, current_time + t.duration});
         } else {
-            std::cerr << "ERR: Node " << id << " overloaded in SLOT mode!\n";
+            std::cerr << "ERR: Host " << id << " overloaded in SLOT mode!\n";
         }
     } else { 
         if (running.empty()) {
@@ -30,15 +30,13 @@ void Node::assignTask(const Task& t, double current_time) {
     }
 }
 
-// [W]
-double Node::getInstantaneousPower() const {
+double Host::getInstantaneousPower() const {
     if (used_CPU == 0) {
-        return P_IDLE;
-        // to think about 0.0?
+        return P_IDLE;  // to think about 0.0?
     }
 
     // P(u) = k * P_max + (1-k) * P_max * u 
-    //      = P_idle + (P_max - P_idle) * utilization
+    //      = P_idle + (P_max - P_idle) * u
     double utilization = used_CPU / total_CPU;
     if (utilization > 1.0) {
         utilization = 1.0;
@@ -47,9 +45,8 @@ double Node::getInstantaneousPower() const {
     return P_IDLE + (P_MAX - P_IDLE) * utilization;
 }
 
-void Node::tick(double current_time, double time_step) {
-    // 1. FIZYKA: Oblicz zużytą energię w tym kroku czasowym
-    // Energia [J] = Moc [W] * Czas [s]
+void Host::tick(double current_time, double time_step) {
+    // E [J] = P [W] * t [s]
     double current_power = getInstantaneousPower();
     total_energy_consumed += current_power * time_step;
 

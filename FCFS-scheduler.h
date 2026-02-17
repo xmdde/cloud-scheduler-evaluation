@@ -5,7 +5,7 @@
 #include <queue>
 
 #include "scheduler.h"
-#include "node.h"
+#include "host.h"
 #include "task.h"
 
 class FCFSScheduler : public Scheduler {
@@ -14,7 +14,7 @@ public:
         return "FCFS";
     }
 
-    bool scheduleTask(const Task& new_task, std::vector<Node>& nodes, double current_time) override;
+    bool scheduleTask(const Task& new_task, std::vector<Host>& nodes, double current_time) override;
 };
 
 #endif  // CLOUD_SCHEDULER_EVALUATION_FCFS_SCHEDULER_H

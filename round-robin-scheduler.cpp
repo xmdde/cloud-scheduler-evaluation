@@ -1,6 +1,6 @@
 #include "round-robin-scheduler.h"
 
-bool RoundRobinScheduler::scheduleTask(const Task& new_task, std::vector<Node>& nodes, double current_time) {
+bool RoundRobinScheduler::scheduleTask(const Task& new_task, std::vector<Host>& nodes, double current_time) {
     if (nodes.empty()) {
         return false;
     }

@@ -3,7 +3,6 @@
 
 #include <memory>
 
-#include "node.h"
 #include "simulator.h"
 #include "scheduler.h"
 #include "task.h"

@@ -8,7 +8,7 @@
 #include "task.h"
 
 class Simulator {
-    std::vector<Node> nodes;
+    std::vector<Host> nodes;
     std::unique_ptr<Scheduler> scheduler;
     const double time_step = 1.0;
 
