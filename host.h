@@ -18,7 +18,7 @@ class Host {
     const Mode mode;
 
     std::vector<RunningTask> running;
-    std::queue<Task> waiting_queue; // queue tasks if host is busy (QUEUE mode)
+    std::queue<Task> waiting_queue;  // queue tasks if host is busy (QUEUE mode)
 
     const double P_IDLE = 75.0;
     const double P_MAX = 125.0;

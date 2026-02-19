@@ -6,13 +6,16 @@
 
 Simulator::Simulator(std::unique_ptr<Scheduler> sched, const Mode mode, int nodes_num)
     : scheduler(std::move(sched)) {
-    for (int i = 0; i < nodes_num; ++i) {
+    for (int i = 0; i < nodes_num/2; ++i) {
         nodes.push_back({i, 8, 16, mode});
+    }
+    for (int i = 0; i < nodes_num/2; ++i) {
+        nodes.push_back({i, 4, 8, mode});
     }
 }
 
 void Simulator::run(std::vector<Task>& tasks, const std::string& file_path) {
-    std::cout << "Running " << scheduler->getName() << "...\n";
+    std::cout << "--------------------------\nRunning " << scheduler->getName() << "...\n";
 
     std::ofstream log(file_path);
     log << "time,hostId,usedCPU,usedRAM,numRunning,totalEnergy\n"; 
@@ -37,7 +40,7 @@ void Simulator::run(std::vector<Task>& tasks, const std::string& file_path) {
             if (success) {
                 it = global_queue.erase(it);
             } else {
-                ++it; // ?
+                ++it;  // ?
             }
         }
 

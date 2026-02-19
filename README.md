@@ -1,11 +1,13 @@
 ### to-do:
-- [ ] FCFS
-- [ ] Round Robin
+- [X] FCFS
+- [X] Round Robin
 - [ ] BestFit (h)
-- [ ] EnergyAware (h)
-- [ ] LoadAware (h)
-- [ ] ML Scheduler
+- [ ] MBFD Algorithm (h)
+- [ ] LoadAware ?? worst fit
+- [ ] ML Scheduler ??
 - [ ] logger
 - [X] fix setting the end of simulation/get makespan
-- [ ] log training data
-- [ ] linear regression
+- [ ] log training data + linear regression??
+- [ ] tests
+- [ ] migrations?
+- [ ] improve logic of turning on/off hosts, maybe start with 50% on?

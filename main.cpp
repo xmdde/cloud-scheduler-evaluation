@@ -5,14 +5,16 @@
 #include "utils.h"
 #include "workload-generator.h"
 
+constexpr uint16_t REQUESTS_NUM = 200;
+
 int main(int argc, const char* argv[]) {
     WorkloadGenerator gen;
 
     auto tasks = gen.generate(
-        20,
+        REQUESTS_NUM,
         DistributionType::NORMAL,
-        1.0, 0.3,   // CPU mean, std
-        2.0, 0.5,   // RAM mean, std
+        1.0, 0.7,   // CPU mean, std
+        2.0, 1.0,   // RAM mean, std
         10.0, 3.0,  // Duration mean, std - was 30, 10
         1.0         // Arrival rate
     );
@@ -27,8 +29,10 @@ int main(int argc, const char* argv[]) {
                   << t.duration << "\n";
     }
 
-    runSimulation(SchedulingMethod::ROUND_ROBIN, Mode::QUEUE, tasks, "output/simulation-log-RR.csv");
+    runSimulation(SchedulingMethod::ROUND_ROBIN, Mode::QUEUE, tasks, "output/simulation-log-RR.csv");  // ???
     runSimulation(SchedulingMethod::FCFS, Mode::SLOT, tasks, "output/simulation-log-FCFS.csv");
+    runSimulation(SchedulingMethod::BEST_FIT, Mode::SLOT, tasks, "output/simulation-log-BestFit.csv");
+    runSimulation(SchedulingMethod::WORST_FIT, Mode::SLOT, tasks, "output/simulation-log-WorstFit.csv");
 
     return 0;
 }
