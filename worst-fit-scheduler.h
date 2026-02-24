@@ -15,6 +15,7 @@ public:
     }
 
     bool scheduleTask(const Task& new_task, std::vector<Host>& nodes, double current_time) override;
+    double calculateScore(const Host& host, const Task& task) const;
 };
 
 #endif  // CLOUD_SCHEDULER_EVALUATION_WORST_FIT_SCHEDULER_H

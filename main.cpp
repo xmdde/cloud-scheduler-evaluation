@@ -29,7 +29,7 @@ int main(int argc, const char* argv[]) {
                   << t.duration << "\n";
     }
 
-    runSimulation(SchedulingMethod::ROUND_ROBIN, Mode::QUEUE, tasks, "output/simulation-log-RR.csv");  // ???
+    // runSimulation(SchedulingMethod::ROUND_ROBIN, Mode::QUEUE, tasks, "output/simulation-log-RR.csv");  // ???
     runSimulation(SchedulingMethod::FCFS, Mode::SLOT, tasks, "output/simulation-log-FCFS.csv");
     runSimulation(SchedulingMethod::BEST_FIT, Mode::SLOT, tasks, "output/simulation-log-BestFit.csv");
     runSimulation(SchedulingMethod::WORST_FIT, Mode::SLOT, tasks, "output/simulation-log-WorstFit.csv");

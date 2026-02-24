@@ -47,12 +47,7 @@ void Simulator::run(std::vector<Task>& tasks, const std::string& file_path) {
         // Update nodes
         for (auto& node : nodes) {
             node.tick(current_time, time_step);
-
-            log << std::fixed << std::setprecision(2);
-            log << current_time << "," << node.id << ","
-                << node.used_CPU << "," << node.used_RAM << ","
-                << node.getRunningNum() << ","
-                << node.total_energy_consumed << "\n";
+            node.logHostState(log);
         }
 
         current_time += time_step;

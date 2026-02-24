@@ -10,9 +10,7 @@ bool WorstFitScheduler::scheduleTask(const Task& task, std::vector<Host>& nodes,
         Host& host = nodes[i];
 
         if (host.canRun(task)) {
-            const double cpu_tb_left = (host.total_CPU - host.used_CPU + task.cpu_required);
-            const double ram_tb_left = (host.total_RAM - host.used_RAM + task.ram_required);
-            const double score = cpu_tb_left + ram_tb_left;
+            const double score = calculateScore(host, task);
 
             if (score > max_remaining_capacity) {
                 max_remaining_capacity = score;
@@ -27,4 +25,11 @@ bool WorstFitScheduler::scheduleTask(const Task& task, std::vector<Host>& nodes,
     }
 
     return false;
+}
+
+double WorstFitScheduler::calculateScore(const Host &host, const Task &task) const {
+    const double cpu_tb_left = (host.total_CPU - host.used_CPU + task.cpu_required);
+    const double ram_tb_left = (host.total_RAM - host.used_RAM + task.ram_required);
+
+    return cpu_tb_left + ram_tb_left;
 }

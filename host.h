@@ -35,11 +35,10 @@ public:
     Host(int id_, double cpu, double ram, Mode m)
         : id(id_), total_CPU(cpu), total_RAM(ram), mode(m) {}
 
+    void logHostState(std::ofstream& log) const;
     bool canRun(const Task& t) const;
     void assignTask(const Task& t, double current_time);
-
     void tick(double current_time, double time_step);
-
     double getInstantaneousPower() const;
 
     bool isIdle() const {

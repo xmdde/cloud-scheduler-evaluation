@@ -2,12 +2,23 @@
 
 #include "task.h"
 
+#include <fstream>
+#include <iomanip>
+
 bool Host::canRun(const Task& t) const {
     if (mode == Mode::SLOT) {
         return (used_CPU + t.cpu_required <= total_CPU && used_RAM + t.ram_required <= total_RAM);
     } else {
         return true;
     }
+}
+
+void Host::logHostState(std::ofstream& log) const {
+    log << std::fixed << std::setprecision(2);
+    log << "current_time" << "," << id << ","
+        << used_CPU << "," << used_RAM << ","
+        << getRunningNum() << ","
+        << total_energy_consumed << "\n";
 }
 
 void Host::assignTask(const Task& t, double current_time) {

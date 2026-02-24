@@ -4,9 +4,9 @@
 
 bool BestFitScheduler::scheduleTask(const Task& task, std::vector<Host>& nodes, double current_time) {
     int best_host_idx = -1;
-    double min_remaining_capacity = std::numeric_limits<double>::max(); //calculateScore(nodes[0], task);
+    double min_remaining_capacity = std::numeric_limits<double>::max();
 
-    for (int i = 1; i < nodes.size(); ++i) {
+    for (int i = 0; i < nodes.size(); ++i) {
         Host& host = nodes[i];
 
         if (host.canRun(task)) {
@@ -30,5 +30,6 @@ bool BestFitScheduler::scheduleTask(const Task& task, std::vector<Host>& nodes, 
 double BestFitScheduler::calculateScore(const Host& host, const Task& task) const {
     const double cpu_tb_left = (host.total_CPU - host.used_CPU + task.cpu_required); // host.total_CPU;
     const double ram_tb_left = (host.total_RAM - host.used_RAM + task.ram_required); // host.total_RAM;
+
     return cpu_tb_left + ram_tb_left;
 }
