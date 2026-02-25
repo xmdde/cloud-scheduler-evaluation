@@ -14,8 +14,18 @@ struct RunningTask {
     double finish_time;
 };
 
+enum class PowerState {
+    ACTIVE,
+    IDLE,
+    SLEEP
+};
+
 class Host {
     const Mode mode;
+    PowerState current_state = PowerState::IDLE;
+
+    double idle_timer = 0.0;
+    static constexpr double IDLE_TIMEOUT = 15.0;
 
     std::vector<RunningTask> running;
     std::queue<Task> waiting_queue;  // queue tasks if host is busy (QUEUE mode)
@@ -35,7 +45,7 @@ public:
     Host(int id_, double cpu, double ram, Mode m)
         : id(id_), total_CPU(cpu), total_RAM(ram), mode(m) {}
 
-    void logHostState(std::ofstream& log) const;
+    void logHostState(std::ofstream& log, const double current_time) const;
     bool canRun(const Task& t) const;
     void assignTask(const Task& t, double current_time);
     void tick(double current_time, double time_step);

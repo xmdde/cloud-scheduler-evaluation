@@ -13,9 +13,9 @@ bool Host::canRun(const Task& t) const {
     }
 }
 
-void Host::logHostState(std::ofstream& log) const {
+void Host::logHostState(std::ofstream& log, double current_time) const {
     log << std::fixed << std::setprecision(2);
-    log << "current_time" << "," << id << ","
+    log << current_time << "," << id << ","
         << used_CPU << "," << used_RAM << ","
         << getRunningNum() << ","
         << total_energy_consumed << "\n";

@@ -8,14 +8,12 @@
 #include "task.h"
 
 #include "round-robin-scheduler.h"
-#include "FCFS-scheduler.h"
 #include "best-fit-scheduler.h"
 #include "worst-fit-scheduler.h"
 
 constexpr int HOSTS_NUM = 10;
 
 enum class SchedulingMethod {
-    FCFS,
     ROUND_ROBIN,
     BEST_FIT,
     WORST_FIT,
@@ -27,10 +25,6 @@ void runSimulation(const SchedulingMethod algorithm, const Mode mode, std::vecto
     std::unique_ptr<Scheduler> scheduler;
 
     switch (algorithm) {
-        case SchedulingMethod::FCFS:
-            scheduler = std::make_unique<FCFSScheduler>();
-            break;
-    
         case SchedulingMethod::ROUND_ROBIN:
             scheduler = std::make_unique<RoundRobinScheduler>();
             break;

@@ -19,6 +19,15 @@ int main(int argc, const char* argv[]) {
         1.0         // Arrival rate
     );
 
+    /*auto tasks = gen.generate(
+        100,                       
+        DistributionType::EXPONENTIAL,
+        2.0, 1.0,
+        4.0, 2.0,
+        3600.0, 900.0,              
+        5.0
+    );*/
+
     std::cout << std::fixed << std::setprecision(2);
     std::cout << "ID\tArrival\tCPU\tRAM\tDuration\n"
               << "----------------------------------------\n";
@@ -29,8 +38,7 @@ int main(int argc, const char* argv[]) {
                   << t.duration << "\n";
     }
 
-    // runSimulation(SchedulingMethod::ROUND_ROBIN, Mode::QUEUE, tasks, "output/simulation-log-RR.csv");  // ???
-    runSimulation(SchedulingMethod::FCFS, Mode::SLOT, tasks, "output/simulation-log-FCFS.csv");
+    runSimulation(SchedulingMethod::ROUND_ROBIN, Mode::QUEUE, tasks, "output/simulation-log-RR.csv");  // ???
     runSimulation(SchedulingMethod::BEST_FIT, Mode::SLOT, tasks, "output/simulation-log-BestFit.csv");
     runSimulation(SchedulingMethod::WORST_FIT, Mode::SLOT, tasks, "output/simulation-log-WorstFit.csv");
 

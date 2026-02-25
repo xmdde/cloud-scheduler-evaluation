@@ -4,13 +4,15 @@
 #include <iomanip>
 #include <memory>
 
+#include "request_queue.h"
+
 Simulator::Simulator(std::unique_ptr<Scheduler> sched, const Mode mode, int nodes_num)
     : scheduler(std::move(sched)) {
     for (int i = 0; i < nodes_num/2; ++i) {
         nodes.push_back({i, 8, 16, mode});
     }
     for (int i = 0; i < nodes_num/2; ++i) {
-        nodes.push_back({i, 4, 8, mode});
+        nodes.push_back({i + nodes_num/2, 4, 8, mode});
     }
 }
 
@@ -18,36 +20,39 @@ void Simulator::run(std::vector<Task>& tasks, const std::string& file_path) {
     std::cout << "--------------------------\nRunning " << scheduler->getName() << "...\n";
 
     std::ofstream log(file_path);
-    log << "time,hostId,usedCPU,usedRAM,numRunning,totalEnergy\n"; 
+    log << "time,host_id,used_CPU,used_RAM,num_running,total_energy\n"; 
 
     size_t next_idx = 0;
     double current_time = 0.0;
-
-    std::deque<Task> global_queue; 
+    
+    QueuePolicy policy = (scheduler->getName() == "MBFD") ? QueuePolicy::DECREASING_CPU : QueuePolicy::FCFS;
+    RequestQueue global_queue(policy); 
 
     while (next_idx < tasks.size() || !global_queue.empty() || !allNodesIdle()) {
-        // Add new tasks to the global queue
+        std::vector<Task> incoming_tasks;
         while (next_idx < tasks.size() && tasks[next_idx].arrival_time <= current_time) {
-            global_queue.push_back(tasks[next_idx]);
+            incoming_tasks.push_back(tasks[next_idx]);
             ++next_idx;
         }
 
-        // Try to schedule
+        global_queue.addRequests(incoming_tasks);
+
         auto it = global_queue.begin();
         while (it != global_queue.end()) {
             bool success = scheduler->scheduleTask(*it, nodes, current_time);
-            
             if (success) {
                 it = global_queue.erase(it);
             } else {
-                ++it;  // ?
+                ++it;
             }
         }
 
-        // Update nodes
         for (auto& node : nodes) {
             node.tick(current_time, time_step);
-            node.logHostState(log);
+            const int TELEMETRY_INTERVAL = 10;
+            if (static_cast<int>(current_time) % TELEMETRY_INTERVAL == 0 || allNodesIdle()) {
+                node.logHostState(log, current_time);
+            }
         }
 
         current_time += time_step;
