@@ -48,19 +48,18 @@ void Simulator::run(std::vector<Task>& tasks, const std::string& file_path) {
         }
 
         for (auto& node : nodes) {
-            node.tick(current_time, time_step);
-            const int TELEMETRY_INTERVAL = 10;
+            node.tick(current_time, TIME_STEP);
             if (static_cast<int>(current_time) % TELEMETRY_INTERVAL == 0 || allNodesIdle()) {
                 node.logHostState(log, current_time);
             }
         }
 
-        current_time += time_step;
+        current_time += TIME_STEP;
     }
 
     log.close();
 
-    std::cout << "Simulation complete. Makespan: " << current_time - time_step << '\n';
+    std::cout << "Simulation complete. Makespan: " << current_time - TIME_STEP << '\n';
     double total_system_energy = 0.0;
     for (const auto& node : nodes) {
         std::cout << "|Host " << node.id << "| E = " << node.total_energy_consumed << " J\n";

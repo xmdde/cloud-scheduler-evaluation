@@ -9,26 +9,25 @@
 
 enum class Mode { SLOT, QUEUE };
 
-struct RunningTask {
-    Task task;
-    double finish_time;
-};
-
 enum class PowerState {
     ACTIVE,
     IDLE,
     SLEEP
 };
 
+struct RunningTask {
+    Task task;
+    double finish_time;
+};
+
 class Host {
     const Mode mode;
     PowerState current_state = PowerState::IDLE;
 
+    static constexpr double IDLE_TIMEOUT = 30.0;
     double idle_timer = 0.0;
-    static constexpr double IDLE_TIMEOUT = 15.0;
 
     std::vector<RunningTask> running;
-    std::queue<Task> waiting_queue;  // queue tasks if host is busy (QUEUE mode)
 
     const double P_IDLE = 75.0;
     const double P_MAX = 125.0;
@@ -40,6 +39,7 @@ public:
 
     double used_CPU = 0.0;
     double used_RAM = 0.0;
+
     double total_energy_consumed = 0.0;  // [J]
 
     Host(int id_, double cpu, double ram, Mode m)
@@ -51,8 +51,8 @@ public:
     void tick(double current_time, double time_step);
     double getInstantaneousPower() const;
 
-    bool isIdle() const {
-        return running.empty() && waiting_queue.empty();
+    bool isIdle() const {  // to replace with enum checking
+        return running.empty();
     }
 
     size_t getRunningNum() const {

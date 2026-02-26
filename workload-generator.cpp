@@ -5,7 +5,7 @@ std::vector<Task> WorkloadGenerator::generate(
     double cpu_mean, double cpu_std,
     double ram_mean, double ram_std,
     double duration_mean, double duration_std,
-    double arrival_rate) {
+    double arrival_rate) {  // inter arrival time
         std::vector<Task> tasks;
         tasks.reserve(count);
 

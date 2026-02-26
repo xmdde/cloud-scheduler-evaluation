@@ -1,7 +1,8 @@
 #include "request_queue.h"
 
 void RequestQueue::addRequests(const std::vector<Task>& new_tasks) {
-    if (new_tasks.empty()) return;
+    if (new_tasks.empty())
+        return;
 
     for (const auto& task : new_tasks) {
         queue.push_back(task);

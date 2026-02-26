@@ -20,11 +20,11 @@ int main(int argc, const char* argv[]) {
     );
 
     /*auto tasks = gen.generate(
-        100,                       
+        REQUESTS_NUM,                       
         DistributionType::EXPONENTIAL,
         2.0, 1.0,
         4.0, 2.0,
-        3600.0, 900.0,              
+        2700.0, 900.0,            
         5.0
     );*/
 
@@ -38,7 +38,7 @@ int main(int argc, const char* argv[]) {
                   << t.duration << "\n";
     }
 
-    runSimulation(SchedulingMethod::ROUND_ROBIN, Mode::QUEUE, tasks, "output/simulation-log-RR.csv");  // ???
+    runSimulation(SchedulingMethod::ROUND_ROBIN, Mode::SLOT, tasks, "output/simulation-log-RR.csv");  // ???
     runSimulation(SchedulingMethod::BEST_FIT, Mode::SLOT, tasks, "output/simulation-log-BestFit.csv");
     runSimulation(SchedulingMethod::WORST_FIT, Mode::SLOT, tasks, "output/simulation-log-WorstFit.csv");
 
