@@ -6,23 +6,27 @@
 #include "simulator.h"
 #include "scheduler.h"
 #include "task.h"
+#include "request_queue.h"
 
 #include "round-robin-scheduler.h"
 #include "best-fit-scheduler.h"
 #include "worst-fit-scheduler.h"
+#include "mbfd-scheduler.h"
 
-constexpr int HOSTS_NUM = 10;
+constexpr int HOSTS_NUM = 16;
 
 enum class SchedulingMethod {
     ROUND_ROBIN,
     BEST_FIT,
+    BFD,
     WORST_FIT,
     LOAD,
-    ENERGY_AWARE,
+    MBFD
 };
 
 void runSimulation(const SchedulingMethod algorithm, const Mode mode, std::vector<Task>& tasks, const std::string& output_path) {
     std::unique_ptr<Scheduler> scheduler;
+    QueuePolicy policy = QueuePolicy::FCFS;
 
     switch (algorithm) {
         case SchedulingMethod::ROUND_ROBIN:
@@ -32,9 +36,19 @@ void runSimulation(const SchedulingMethod algorithm, const Mode mode, std::vecto
         case SchedulingMethod::BEST_FIT:
             scheduler = std::make_unique<BestFitScheduler>();
             break;
+
+        case SchedulingMethod::BFD:
+            scheduler = std::make_unique<BestFitScheduler>();
+            policy = QueuePolicy::DECREASING_CPU;
+            break;
         
         case SchedulingMethod::WORST_FIT:
             scheduler = std::make_unique<WorstFitScheduler>();
+            break;
+        
+        case SchedulingMethod::MBFD:
+            scheduler = std::make_unique<MBFDScheduler>();
+            policy = QueuePolicy::DECREASING_CPU;
             break;
 
         default:
@@ -42,7 +56,7 @@ void runSimulation(const SchedulingMethod algorithm, const Mode mode, std::vecto
     }
 
     Simulator sim(std::move(scheduler), mode, HOSTS_NUM);
-    sim.run(tasks, output_path);
+    sim.run(policy, tasks, output_path);
 }
 
 #endif  // CLOUD_SCHEDULER_EVALUATION_UTILS_H

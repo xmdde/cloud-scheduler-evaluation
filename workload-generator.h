@@ -31,6 +31,8 @@ public:
         double durationMean,
         double durationStd,
         double arrivalRate = 1.0);
+
+    std::vector<Task> generateRealisticCloudTraffic();
 };
 
 #endif  // CLOUD_SCHEDULER_EVALUATION_WORKLOAD_GENERATOR_H

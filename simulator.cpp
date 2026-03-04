@@ -16,17 +16,16 @@ Simulator::Simulator(std::unique_ptr<Scheduler> sched, const Mode mode, int node
     }
 }
 
-void Simulator::run(std::vector<Task>& tasks, const std::string& file_path) {
+void Simulator::run(const QueuePolicy policy, std::vector<Task>& tasks, const std::string& file_path) {
     std::cout << "--------------------------\nRunning " << scheduler->getName() << "...\n";
 
     std::ofstream log(file_path);
-    log << "time,host_id,used_CPU,used_RAM,num_running,total_energy\n"; 
+    log << "time,host_id,used_CPU,used_RAM,num_running,state,total_energy\n"; 
 
     size_t next_idx = 0;
     double current_time = 0.0;
-    
-    QueuePolicy policy = (scheduler->getName() == "MBFD") ? QueuePolicy::DECREASING_CPU : QueuePolicy::FCFS;
-    RequestQueue global_queue(policy); 
+
+    RequestQueue global_queue(policy);
 
     while (next_idx < tasks.size() || !global_queue.empty() || !allNodesIdle()) {
         std::vector<Task> incoming_tasks;
@@ -49,12 +48,19 @@ void Simulator::run(std::vector<Task>& tasks, const std::string& file_path) {
 
         for (auto& node : nodes) {
             node.tick(current_time, TIME_STEP);
-            if (static_cast<int>(current_time) % TELEMETRY_INTERVAL == 0 || allNodesIdle()) {
-                node.logHostState(log, current_time);
-            }
         }
 
         current_time += TIME_STEP;
+
+        if (static_cast<int>(current_time) % TELEMETRY_INTERVAL == 0) {
+            for (auto& node : nodes) {
+                node.logHostState(log, current_time);
+            }
+        }
+    }
+
+    for (auto& node : nodes) {
+        node.logHostState(log, current_time);
     }
 
     log.close();

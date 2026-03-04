@@ -9,10 +9,11 @@
 
 enum class Mode { SLOT, QUEUE };
 
-enum class PowerState {
-    ACTIVE,
-    IDLE,
-    SLEEP
+enum PowerState {
+    ACTIVE = 0,
+    IDLE = 1,
+    BOOTING = 2,
+    SLEEP = 3
 };
 
 struct RunningTask {
@@ -22,15 +23,19 @@ struct RunningTask {
 
 class Host {
     const Mode mode;
-    PowerState current_state = PowerState::IDLE;
+    PowerState current_state = PowerState::SLEEP;
 
-    static constexpr double IDLE_TIMEOUT = 30.0;
+    static constexpr double IDLE_TIMEOUT = 300.0;
+    static constexpr double BOOT_DELAY = 55.0;
+    
     double idle_timer = 0.0;
+    double boot_timer = 0.0;
 
     std::vector<RunningTask> running;
 
-    const double P_IDLE = 75.0;
-    const double P_MAX = 125.0;
+    const double P_BOOT = 350.0;
+    const double P_IDLE = 150.0; // 60% P_MAX
+    const double P_MAX = 250.0;
 
 public:
     const int id;
@@ -51,13 +56,16 @@ public:
     void tick(double current_time, double time_step);
     double getInstantaneousPower() const;
 
-    bool isIdle() const {  // to replace with enum checking
-        return running.empty();
+    bool isIdle() const {  
+        return current_state == PowerState::IDLE || current_state == PowerState::SLEEP;
     }
 
     size_t getRunningNum() const {
         return running.size();
     }
+
+    PowerState getState() const { return current_state; }
+    double getExpectedPowerIncrease(const Task& t) const;
 };
 
 #endif  // CLOUD_SCHEDULER_EVALUATION_HOST_H
