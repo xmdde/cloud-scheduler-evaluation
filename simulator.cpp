@@ -6,13 +6,13 @@
 
 #include "request_queue.h"
 
-Simulator::Simulator(std::unique_ptr<Scheduler> sched, const Mode mode, int nodes_num)
+Simulator::Simulator(std::unique_ptr<Scheduler> sched, int nodes_num)
     : scheduler(std::move(sched)) {
     for (int i = 0; i < nodes_num/2; ++i) {
-        nodes.push_back({i, 8, 16, mode});
+        nodes.push_back({i, 8, 16});
     }
     for (int i = 0; i < nodes_num/2; ++i) {
-        nodes.push_back({i + nodes_num/2, 4, 8, mode});
+        nodes.push_back({i + nodes_num/2, 4, 8});
     }
 }
 

@@ -6,12 +6,7 @@
 #include <iomanip>
 
 bool Host::canRun(const Task& t) const {
-    if (mode == Mode::SLOT) {
-        return (used_CPU + t.cpu_required <= total_CPU && used_RAM + t.ram_required <= total_RAM);
-    } else if (running.empty()) {
-        return true;
-    }
-    return false;
+    return (used_CPU + t.cpu_required <= total_CPU && used_RAM + t.ram_required <= total_RAM);
 }
 
 void Host::logHostState(std::ofstream& log, double current_time) const {
@@ -23,30 +18,26 @@ void Host::logHostState(std::ofstream& log, double current_time) const {
 }
 
 void Host::assignTask(const Task& t, double current_time) {
-    if (mode == Mode::SLOT) {
-        if (canRun(t)) {
-            used_CPU += t.cpu_required;
-            used_RAM += t.ram_required;
-            
-            double actual_duration = t.duration;
+    if (canRun(t)) {
+        used_CPU += t.cpu_required;
+        used_RAM += t.ram_required;
 
-            if (current_state == PowerState::SLEEP) {
-                current_state = PowerState::BOOTING;
-                boot_timer = BOOT_DELAY;
-                actual_duration += BOOT_DELAY;
-            } else if (current_state == PowerState::BOOTING) {
-                actual_duration += boot_timer;
-            } else if (current_state == PowerState::IDLE) {
-                current_state = PowerState::ACTIVE;
-                idle_timer = 0.0;
-            }
+        double actual_duration = t.duration;
 
-            running.push_back({t, current_time + actual_duration});
-        } else {
-            std::cerr << "ERR: Host " << id << " overloaded in SLOT mode!\n";
+        if (current_state == PowerState::SLEEP) {
+            current_state = PowerState::BOOTING;
+            boot_timer = BOOT_DELAY;
+            actual_duration += BOOT_DELAY;
+        } else if (current_state == PowerState::BOOTING) {
+            actual_duration += boot_timer;
+        } else if (current_state == PowerState::IDLE) {
+            current_state = PowerState::ACTIVE;
+            idle_timer = 0.0;
         }
+
+        running.push_back({t, current_time + actual_duration});
     } else {
-        // TODO
+        std::cerr << "ERR: Host " << id << " overloaded in SLOT mode!\n";
     }
 }
 

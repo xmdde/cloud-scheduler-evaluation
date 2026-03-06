@@ -40,10 +40,10 @@ int main(int argc, const char* argv[]) {
                   << t.duration << "\n";
     }
 
-    runSimulation(SchedulingMethod::ROUND_ROBIN, Mode::SLOT, tasks, "output/simulation-log-RR.csv");  // ???
-    runSimulation(SchedulingMethod::BEST_FIT, Mode::SLOT, tasks, "output/simulation-log-BestFit.csv");
-    runSimulation(SchedulingMethod::WORST_FIT, Mode::SLOT, tasks, "output/simulation-log-WorstFit.csv");
-    runSimulation(SchedulingMethod::BFD, Mode::SLOT, tasks, "output/simulation-log-BFD.csv");
-    runSimulation(SchedulingMethod::MBFD, Mode::SLOT, tasks, "output/simulation-log-MBFD.csv");
+    runSimulation(SchedulingMethod::ROUND_ROBIN, tasks, "output/simulation-log-RR.csv");
+    runSimulation(SchedulingMethod::BEST_FIT, tasks, "output/simulation-log-BestFit.csv");
+    runSimulation(SchedulingMethod::WORST_FIT, tasks, "output/simulation-log-WorstFit.csv");
+    runSimulation(SchedulingMethod::BFD, tasks, "output/simulation-log-BFD.csv");
+    runSimulation(SchedulingMethod::MBFD, tasks, "output/simulation-log-MBFD.csv");
     return 0;
 }

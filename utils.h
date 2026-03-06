@@ -24,7 +24,7 @@ enum class SchedulingMethod {
     MBFD
 };
 
-void runSimulation(const SchedulingMethod algorithm, const Mode mode, std::vector<Task>& tasks, const std::string& output_path) {
+void runSimulation(const SchedulingMethod algorithm, std::vector<Task>& tasks, const std::string& output_path) {
     std::unique_ptr<Scheduler> scheduler;
     QueuePolicy policy = QueuePolicy::FCFS;
 
@@ -55,7 +55,7 @@ void runSimulation(const SchedulingMethod algorithm, const Mode mode, std::vecto
             std::cerr << "Method to add!\n";
     }
 
-    Simulator sim(std::move(scheduler), mode, HOSTS_NUM);
+    Simulator sim(std::move(scheduler), HOSTS_NUM);
     sim.run(policy, tasks, output_path);
 }
 

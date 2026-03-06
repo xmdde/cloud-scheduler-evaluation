@@ -7,8 +7,6 @@
 
 #include "task.h"
 
-enum class Mode { SLOT, QUEUE };
-
 enum PowerState {
     ACTIVE = 0,
     IDLE = 1,
@@ -22,7 +20,6 @@ struct RunningTask {
 };
 
 class Host {
-    const Mode mode;
     PowerState current_state = PowerState::SLEEP;
 
     static constexpr double IDLE_TIMEOUT = 300.0;
@@ -47,8 +44,8 @@ public:
 
     double total_energy_consumed = 0.0;  // [J]
 
-    Host(int id_, double cpu, double ram, Mode m)
-        : id(id_), total_CPU(cpu), total_RAM(ram), mode(m) {}
+    Host(int id_, double cpu, double ram)
+        : id(id_), total_CPU(cpu), total_RAM(ram){}
 
     void logHostState(std::ofstream& log, const double current_time) const;
     bool canRun(const Task& t) const;

@@ -18,7 +18,7 @@ class Simulator {
     bool allNodesIdle();
 
 public:
-    Simulator(std::unique_ptr<Scheduler> sched, const Mode mode, int nodes_num);
+    Simulator(std::unique_ptr<Scheduler> sched, int nodes_num);
     void run(QueuePolicy policy, std::vector<Task>& tasks, const std::string& file_path);
 };
 
