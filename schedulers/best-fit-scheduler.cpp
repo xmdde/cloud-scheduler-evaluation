@@ -3,28 +3,45 @@
 #include <limits>
 
 bool BestFitScheduler::scheduleTask(const Task& task, std::vector<Host>& nodes, double current_time) {
-    int best_host_idx = -1;
-    double min_remaining_capacity = std::numeric_limits<double>::max();
+    Host* best_host = findBestNode(task, nodes);
 
-    for (int i = 0; i < nodes.size(); ++i) {
-        Host& host = nodes[i];
-
-        if (host.canRun(task)) {
-            const double score = calculateScore(host, task);
-
-            if (score < min_remaining_capacity) {
-                min_remaining_capacity = score;
-                best_host_idx = i;
-            }
-        }
-    }
-
-    if (best_host_idx != -1) {
-        nodes[best_host_idx].assignTask(task, current_time);
+    if (best_host != nullptr) {
+        best_host->assignTask(task, current_time);
         return true;
     }
 
     return false;
+}
+
+Host* BestFitScheduler::findBestNode(const Task& task, std::vector<Host>& nodes) const {
+    Host* best_host = nullptr;
+    double min_score = std::numeric_limits<double>::max();
+
+    for (auto& host : nodes) {
+        if (host.getState() != PowerState::SLEEP && host.canRun(task)) {
+            const double score = calculateScore(host, task);
+            if (score < min_score) {
+                min_score = score;
+                best_host = &host;
+            }
+        }
+    }
+
+    if (best_host != nullptr) {
+        return best_host;
+    }
+
+    for (auto& host : nodes) {
+        if (host.getState() == PowerState::SLEEP && host.canRun(task)) {
+            const double score = calculateScore(host, task);
+            if (score < min_score) {
+                min_score = score;
+                best_host = &host;
+            }
+        }
+    }
+
+    return best_host;
 }
 
 double BestFitScheduler::calculateScore(const Host& host, const Task& task) const {

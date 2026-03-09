@@ -13,7 +13,7 @@ class Simulator {
     std::unique_ptr<Scheduler> scheduler;
 
     const double TIME_STEP = 1.0;
-    static constexpr int TELEMETRY_INTERVAL = 10;
+    static constexpr int TELEMETRY_INTERVAL = 30;
 
     bool allNodesIdle();
 

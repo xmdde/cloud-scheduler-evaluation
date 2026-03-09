@@ -80,5 +80,6 @@ bool Simulator::allNodesIdle() {
             return false;
         }
     }
+
     return true;
 }

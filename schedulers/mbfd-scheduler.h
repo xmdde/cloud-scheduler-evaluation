@@ -11,6 +11,8 @@ public:
     std::string getName() const override {
         return "MBFD";
     }
+private:
+    Host* findTargetNode(const Task& task, std::vector<Host>& nodes) const;
 };
 
 #endif // CLOUD_SCHEDULER_EVALUATION_MBFD_SCHEDULER_H

@@ -1,37 +1,45 @@
 #include "mbfd-scheduler.h"
 
 #include <limits>
+#include <cmath>
 
 bool MBFDScheduler::scheduleTask(const Task& task, std::vector<Host>& nodes, double current_time) {
-    int best_host_idx = -1;
+    Host* best_host = findTargetNode(task, nodes);
+
+    if (best_host != nullptr) {
+        best_host->assignTask(task, current_time);
+        return true;
+    }
+
+    return false;
+}
+
+Host* MBFDScheduler::findTargetNode(const Task& task, std::vector<Host>& nodes) const {
+    Host* best_host = nullptr;
     double min_power_increase = std::numeric_limits<double>::max();
-    double min_remaining_capacity = std::numeric_limits<double>::max(); // TIE-BREAKER
+    double min_remaining_capacity = std::numeric_limits<double>::max(); 
+    
+    const double EPSILON = 0.0001;
 
-    for (int i = 0; i < nodes.size(); ++i) {
-        Host& host = nodes[i];
-
+    for (auto& host : nodes) {
         if (host.canRun(task)) {
-            double power_increase = host.getExpectedPowerIncrease(task);
-            double rem_cap = host.total_CPU - (host.used_CPU + task.cpu_required);
+            const double power_increase = host.getExpectedPowerIncrease(task);
+            const double rem_cap = host.total_CPU - (host.used_CPU + task.cpu_required);
 
-            if (power_increase < min_power_increase - 0.0001) {
+            if (power_increase < min_power_increase - EPSILON) {
                 min_power_increase = power_increase;
                 min_remaining_capacity = rem_cap;
-                best_host_idx = i;
+                best_host = &host;
             } 
-            else if (std::abs(power_increase - min_power_increase) <= 0.0001) {
+
+            else if (std::abs(power_increase - min_power_increase) <= EPSILON) {
                 if (rem_cap < min_remaining_capacity) {
                     min_remaining_capacity = rem_cap;
-                    best_host_idx = i;
+                    best_host = &host;
                 }
             }
         }
     }
 
-    if (best_host_idx != -1) {
-        nodes[best_host_idx].assignTask(task, current_time);
-        return true;
-    }
-
-    return false;
+    return best_host;
 }
