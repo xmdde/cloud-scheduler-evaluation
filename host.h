@@ -30,9 +30,10 @@ class Host {
 
     std::vector<RunningTask> running;
 
+    static constexpr double k = 0.3;
+    static constexpr double P_MAX = 250.0;
+    const double P_IDLE = k * P_MAX;
     const double P_BOOT = 350.0;
-    const double P_IDLE = 150.0; // 60% P_MAX
-    const double P_MAX = 250.0;
 
 public:
     const int id;
@@ -42,7 +43,7 @@ public:
     double used_CPU = 0.0;
     double used_RAM = 0.0;
 
-    double total_energy_consumed = 0.0;  // [J]
+    double total_energy = 0.0;  // [J]
 
     Host(int id_, double cpu, double ram)
         : id(id_), total_CPU(cpu), total_RAM(ram){}
@@ -51,11 +52,9 @@ public:
     bool canRun(const Task& t) const;
     void assignTask(const Task& t, double current_time);
     void tick(double current_time, double time_step);
+    void removeFinishedTasks(const double current_time);
+    void updateState(const double time_step);
     double getInstantaneousPower() const;
-
-    bool isIdle() const {  
-        return current_state == PowerState::IDLE || current_state == PowerState::SLEEP;
-    }
 
     size_t getRunningNum() const {
         return running.size();

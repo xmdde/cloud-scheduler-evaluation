@@ -27,7 +27,7 @@ void Simulator::run(const QueuePolicy policy, std::vector<Task>& tasks, const st
 
     RequestQueue global_queue(policy);
 
-    while (next_idx < tasks.size() || !global_queue.empty() || !allNodesIdle()) {
+    while (next_idx < tasks.size() || !global_queue.empty() || !allNodesFinished()) {
         std::vector<Task> incoming_tasks;
         while (next_idx < tasks.size() && tasks[next_idx].arrival_time <= current_time) {
             incoming_tasks.push_back(tasks[next_idx]);
@@ -68,15 +68,15 @@ void Simulator::run(const QueuePolicy policy, std::vector<Task>& tasks, const st
     std::cout << "Simulation complete. Makespan: " << current_time - TIME_STEP << '\n';
     double total_system_energy = 0.0;
     for (const auto& node : nodes) {
-        std::cout << "|Host " << node.id << "| E = " << node.total_energy_consumed << " J\n";
-        total_system_energy += node.total_energy_consumed;
+        std::cout << "|Host " << node.id << "| E = " << node.total_energy << " J\n";
+        total_system_energy += node.total_energy;
     }
     std::cout << "Total System Energy: " << total_system_energy << " J\n";
 }
 
-bool Simulator::allNodesIdle() {
+bool Simulator::allNodesFinished() {
     for (const auto& node : nodes) {
-        if (!node.isIdle()) {
+        if (node.getRunningNum()) {
             return false;
         }
     }

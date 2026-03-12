@@ -14,7 +14,7 @@ void Host::logHostState(std::ofstream& log, double current_time) const {
     log << current_time << "," << id << ","
         << used_CPU << "," << used_RAM << ","
         << getRunningNum() << "," << current_state << ","
-        << total_energy_consumed << "\n";
+        << total_energy << "\n";
 }
 
 void Host::assignTask(const Task& t, double current_time) {
@@ -59,14 +59,20 @@ double Host::getInstantaneousPower() const {
             return P_IDLE + (P_MAX - P_IDLE) * utilization;
         }
     }
+
     return 0.0;
 }
 
 void Host::tick(double current_time, double time_step) {
     // E [J] = P [W] * t [s]
     double current_power = getInstantaneousPower();
-    total_energy_consumed += current_power * time_step;
+    total_energy += current_power * time_step;
 
+    removeFinishedTasks(current_time);
+    updateState(time_step);
+}
+
+void Host::removeFinishedTasks(const double current_time) {
     // Check for finished tasks
     auto it = running.begin();
     while (it != running.end()) {
@@ -74,15 +80,18 @@ void Host::tick(double current_time, double time_step) {
             used_CPU -= it->task.cpu_required;
             used_RAM -= it->task.ram_required;
 
-            if (used_CPU < 0.001) used_CPU = 0.0;
-            if (used_RAM < 0.001) used_RAM = 0.0;
+            constexpr double EPSILON = 0.001;
+            if (used_CPU < EPSILON) used_CPU = 0.0;
+            if (used_RAM < EPSILON) used_RAM = 0.0;
 
             it = running.erase(it);
         } else {
             ++it;
         }
     }
+}
 
+void Host::updateState(const double time_step) {
     // State machine
     if (current_state == PowerState::BOOTING) {
         boot_timer -= time_step;

@@ -9,7 +9,6 @@ std::vector<Task> WorkloadGenerator::generate(
         std::vector<Task> tasks;
         tasks.reserve(count);
 
-        // Rozkłady
         std::uniform_real_distribution<double> uniformCPU(cpu_mean - cpu_std, cpu_mean + cpu_std);
         std::uniform_real_distribution<double> uniformRAM(ram_mean - ram_std, ram_mean + ram_std);
         std::uniform_real_distribution<double> uniformDur(duration_mean - duration_std, duration_mean + duration_std);
