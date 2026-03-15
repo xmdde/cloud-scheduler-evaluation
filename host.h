@@ -20,7 +20,7 @@ struct RunningTask {
 };
 
 class Host {
-    PowerState current_state = PowerState::SLEEP;
+    PowerState state = PowerState::SLEEP;
 
     static constexpr double IDLE_TIMEOUT = 300.0;
     static constexpr double BOOT_DELAY = 55.0;
@@ -60,7 +60,7 @@ public:
         return running.size();
     }
 
-    PowerState getState() const { return current_state; }
+    PowerState getState() const { return state; }
     double getExpectedPowerIncrease(const Task& t) const;
 };
 

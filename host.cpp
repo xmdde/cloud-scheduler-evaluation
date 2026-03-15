@@ -6,14 +6,14 @@
 #include <iomanip>
 
 bool Host::canRun(const Task& t) const {
-    return (used_CPU + t.cpu_required <= total_CPU && used_RAM + t.ram_required <= total_RAM);
+    return used_CPU + t.cpu_required <= total_CPU && used_RAM + t.ram_required <= total_RAM;
 }
 
 void Host::logHostState(std::ofstream& log, double current_time) const {
     log << std::fixed << std::setprecision(2);
     log << current_time << "," << id << ","
         << used_CPU << "," << used_RAM << ","
-        << getRunningNum() << "," << current_state << ","
+        << getRunningNum() << "," << state << ","
         << total_energy << "\n";
 }
 
@@ -22,27 +22,27 @@ void Host::assignTask(const Task& t, double current_time) {
         used_CPU += t.cpu_required;
         used_RAM += t.ram_required;
 
-        double actual_duration = t.duration;
+        double finish_time = current_time + t.duration;
 
-        if (current_state == PowerState::SLEEP) {
-            current_state = PowerState::BOOTING;
+        if (state == PowerState::SLEEP) {
+            state = PowerState::BOOTING;
             boot_timer = BOOT_DELAY;
-            actual_duration += BOOT_DELAY;
-        } else if (current_state == PowerState::BOOTING) {
-            actual_duration += boot_timer;
-        } else if (current_state == PowerState::IDLE) {
-            current_state = PowerState::ACTIVE;
+            finish_time += BOOT_DELAY;
+        } else if (state == PowerState::BOOTING) {
+            finish_time += boot_timer;
+        } else if (state == PowerState::IDLE) {
+            state = PowerState::ACTIVE;
             idle_timer = 0.0;
         }
 
-        running.push_back({t, current_time + actual_duration});
+        running.push_back({t, finish_time});
     } else {
-        std::cerr << "ERR: Host " << id << " overloaded in SLOT mode!\n";
+        std::cerr << "ERR: Host " << id << " overloaded!\n";
     }
 }
 
 double Host::getInstantaneousPower() const {
-    switch (current_state) {
+    switch (state) {
         case PowerState::SLEEP:
             return 0.0; // or P_SLEEP?
 
@@ -53,10 +53,10 @@ double Host::getInstantaneousPower() const {
             return P_BOOT;
 
         case PowerState::ACTIVE: {
-            double utilization = used_CPU / total_CPU;
-            if (utilization > 1.0)
-                utilization = 1.0; 
-            return P_IDLE + (P_MAX - P_IDLE) * utilization;
+            double u = used_CPU / total_CPU;
+            if (u > 1.0)
+                u = 1.0; 
+            return P_IDLE + (P_MAX - P_IDLE) * u;
         }
     }
 
@@ -93,44 +93,43 @@ void Host::removeFinishedTasks(const double current_time) {
 
 void Host::updateState(const double time_step) {
     // State machine
-    if (current_state == PowerState::BOOTING) {
+    if (state == PowerState::BOOTING) {
         boot_timer -= time_step;
         if (boot_timer <= 0.0) {
-            current_state = PowerState::ACTIVE;
+            state = PowerState::ACTIVE;
             boot_timer = 0.0;
         }
     } else {
         if (running.empty()) {
-            if (current_state == PowerState::ACTIVE) {
-                current_state = PowerState::IDLE;
+            if (state == PowerState::ACTIVE) {
+                state = PowerState::IDLE;
                 idle_timer = 0.0;
-            } else if (current_state == PowerState::IDLE) {
+            } else if (state == PowerState::IDLE) {
                 idle_timer += time_step;
                 if (idle_timer >= IDLE_TIMEOUT) {
-                    current_state = PowerState::SLEEP;
+                    state = PowerState::SLEEP;
                     idle_timer = 0.0;
                 }
             }
         } else {
-            current_state = PowerState::ACTIVE;
+            state = PowerState::ACTIVE;
             idle_timer = 0.0;
         }
     }
 }
 
 double Host::getExpectedPowerIncrease(const Task& t) const {
-    if (current_state == PowerState::SLEEP) {
-        return P_BOOT;  // - sleep
+    double current_util = used_CPU / total_CPU;
+    if (current_util > 1.0) current_util = 1.0;
+
+    double future_util = (used_CPU + t.cpu_required) / total_CPU;
+    if (future_util > 1.0) future_util = 1.0;
+
+    double delta_p = (P_MAX - P_IDLE) * (future_util - current_util);
+
+    if (state == PowerState::SLEEP) {
+        return P_IDLE + delta_p;
     } else {
-        double current_util = used_CPU / total_CPU;
-        if (current_util > 1.0)
-            current_util = 1.0;
-
-        double future_util = (used_CPU + t.cpu_required) / total_CPU;
-        if (future_util > 1.0)
-            future_util = 1.0;
-
-        // Beloglazov:
-        return (P_MAX - P_IDLE) * (future_util - current_util);
+        return delta_p;
     }
 }
