@@ -59,7 +59,6 @@ double Host::getInstantaneousPower() const {
             return P_IDLE + (P_MAX - P_IDLE) * u;
         }
     }
-
     return 0.0;
 }
 

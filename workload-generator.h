@@ -33,6 +33,9 @@ public:
         double arrivalRate = 1.0);
 
     std::vector<Task> generateRealisticCloudTraffic();
+    std::vector<Task> generateLowLoad();
+    std::vector<Task> generateSpikyLoad();
+    std::vector<Task> generateHighLoad();
 };
 
 #endif  // CLOUD_SCHEDULER_EVALUATION_WORKLOAD_GENERATOR_H

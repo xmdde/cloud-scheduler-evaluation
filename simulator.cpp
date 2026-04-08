@@ -8,11 +8,12 @@
 
 Simulator::Simulator(std::unique_ptr<Scheduler> sched, int nodes_num)
     : scheduler(std::move(sched)) {
-    for (int i = 0; i < nodes_num/2; ++i) {
-        nodes.push_back({i, 8, 16});
+    for (int i = 0; i < nodes_num / 2; ++i) {
+        nodes.push_back({i, 32.0, 128.0}); 
     }
-    for (int i = 0; i < nodes_num/2; ++i) {
-        nodes.push_back({i + nodes_num/2, 4, 8});
+
+    for (int i = 0; i < nodes_num / 2; ++i) {
+        nodes.push_back({i + (nodes_num / 2), 16.0, 64.0}); 
     }
 }
 
@@ -71,7 +72,7 @@ void Simulator::run(const QueuePolicy policy, std::vector<Task>& tasks, const st
         std::cout << "|Host " << node.id << "| E = " << node.total_energy << " J\n";
         total_system_energy += node.total_energy;
     }
-    std::cout << "Total System Energy: " << total_system_energy << " J\n";
+    std::cout << "Total System Energy: " << total_system_energy/1000 << " kJ\n";
 }
 
 bool Simulator::allNodesFinished() {

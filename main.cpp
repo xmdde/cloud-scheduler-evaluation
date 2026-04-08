@@ -9,25 +9,6 @@ constexpr uint16_t REQUESTS_NUM = 50;
 
 int main(int argc, const char* argv[]) {
     WorkloadGenerator gen;
-
-    /*auto tasks = gen.generate(
-        REQUESTS_NUM,
-        DistributionType::NORMAL,
-        1.0, 0.7,   // CPU mean, std
-        2.0, 1.0,   // RAM mean, std
-        10.0, 3.0,  // Duration mean, std - was 30, 10
-        1.0         // Arrival rate
-    );*/
-
-    /*auto tasks = gen.generate(
-        REQUESTS_NUM,                       
-        DistributionType::EXPONENTIAL,
-        2.0, 1.0,
-        4.0, 2.0,
-        2700.0, 900.0,
-        5.0
-    );*/
-
     auto tasks = gen.generateRealisticCloudTraffic();
 
     std::cout << std::fixed << std::setprecision(2);
