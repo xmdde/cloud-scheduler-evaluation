@@ -19,7 +19,7 @@ class WorkloadGenerator {
     int next_task_id = 1;
 
 public:
-    WorkloadGenerator(uint64_t seed = std::random_device{}()) : rng(seed) {}
+    WorkloadGenerator(uint64_t seed = std::random_device{}()) : rng(seed), next_task_id(1) {}
 
     std::vector<Task> generate(
         int count,

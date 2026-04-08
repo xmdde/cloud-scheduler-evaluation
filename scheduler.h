@@ -8,7 +8,7 @@
 
 class Scheduler {
 public:
-    virtual bool scheduleTask(const Task& task, std::vector<Host>& nodes, double current_time) = 0;
+    virtual bool scheduleTask(Task& task, std::vector<Host>& nodes, double current_time) = 0;
     virtual std::string getName() const = 0;
     virtual ~Scheduler() = default;
 };

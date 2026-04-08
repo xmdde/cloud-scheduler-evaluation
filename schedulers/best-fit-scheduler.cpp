@@ -2,7 +2,7 @@
 
 #include <limits>
 
-bool BestFitScheduler::scheduleTask(const Task& task, std::vector<Host>& nodes, double current_time) {
+bool BestFitScheduler::scheduleTask(Task& task, std::vector<Host>& nodes, double current_time) {
     Host* best_host = findBestNode(task, nodes);
 
     if (best_host != nullptr) {

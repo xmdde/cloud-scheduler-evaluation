@@ -17,23 +17,26 @@ void Host::logHostState(std::ofstream& log, double current_time) const {
         << total_energy << "\n";
 }
 
-void Host::assignTask(const Task& t, double current_time) {
+void Host::assignTask(Task& t, double current_time) {
     if (canRun(t)) {
         used_CPU += t.cpu_required;
         used_RAM += t.ram_required;
 
-        double finish_time = current_time + t.duration;
+        double actual_start_time = current_time;
 
         if (state == PowerState::SLEEP) {
             state = PowerState::BOOTING;
             boot_timer = BOOT_DELAY;
-            finish_time += BOOT_DELAY;
+            actual_start_time += BOOT_DELAY;
         } else if (state == PowerState::BOOTING) {
-            finish_time += boot_timer;
+            actual_start_time += boot_timer;
         } else if (state == PowerState::IDLE) {
             state = PowerState::ACTIVE;
             idle_timer = 0.0;
         }
+
+        t.start_time = actual_start_time;
+        double finish_time = actual_start_time + t.duration;
 
         running.push_back({t, finish_time});
     } else {

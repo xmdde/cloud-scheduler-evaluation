@@ -3,7 +3,7 @@
 #include <limits>
 #include <cmath>
 
-bool MBFDScheduler::scheduleTask(const Task& task, std::vector<Host>& nodes, double current_time) {
+bool MBFDScheduler::scheduleTask(Task& task, std::vector<Host>& nodes, double current_time) {
     Host* best_host = findTargetNode(task, nodes);
 
     if (best_host != nullptr) {

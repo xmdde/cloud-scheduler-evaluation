@@ -20,8 +20,20 @@ Simulator::Simulator(std::unique_ptr<Scheduler> sched, int nodes_num)
 void Simulator::run(const QueuePolicy policy, std::vector<Task>& tasks, const std::string& file_path) {
     std::cout << "--------------------------\nRunning " << scheduler->getName() << "...\n";
 
+    // 1. Plik logów dla Hostów (Szeregi czasowe)
     std::ofstream log(file_path);
     log << "time,host_id,used_CPU,used_RAM,num_running,state,total_energy\n"; 
+
+    // 2. Plik logów dla Zadań (Czas oczekiwania / QoS)
+    std::string tasks_log_path = file_path;
+    size_t ext_pos = tasks_log_path.rfind(".csv");
+    if (ext_pos != std::string::npos) {
+        tasks_log_path.replace(ext_pos, 4, "_tasks.csv");
+    } else {
+        tasks_log_path += "_tasks.csv";
+    }
+    std::ofstream tasks_log(tasks_log_path);
+    tasks_log << "task_id,arrival_time,start_time,wait_time\n";
 
     size_t next_idx = 0;
     double current_time = 0.0;
@@ -39,8 +51,17 @@ void Simulator::run(const QueuePolicy policy, std::vector<Task>& tasks, const st
 
         auto it = global_queue.begin();
         while (it != global_queue.end()) {
+            // UWAGA: upewnij się, że scheduleTask modyfikuje it->start_time!
             bool success = scheduler->scheduleTask(*it, nodes, current_time);
+            
             if (success) {
+                // Logowanie QoS do pliku zadań w momencie alokacji
+                double wait_time = it->start_time - it->arrival_time;
+                tasks_log << it->id << "," 
+                          << it->arrival_time << "," 
+                          << it->start_time << "," 
+                          << wait_time << "\n";
+                          
                 it = global_queue.erase(it);
             } else {
                 ++it;
@@ -65,6 +86,7 @@ void Simulator::run(const QueuePolicy policy, std::vector<Task>& tasks, const st
     }
 
     log.close();
+    tasks_log.close(); // Zamknięcie pliku z zadaniami
 
     std::cout << "Simulation complete. Makespan: " << current_time - TIME_STEP << '\n';
     double total_system_energy = 0.0;
@@ -81,6 +103,5 @@ bool Simulator::allNodesFinished() {
             return false;
         }
     }
-
     return true;
 }
