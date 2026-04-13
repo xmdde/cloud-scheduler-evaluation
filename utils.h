@@ -2,6 +2,7 @@
 #define CLOUD_SCHEDULER_EVALUATION_UTILS_H
 
 #include <memory>
+#include <optional>
 
 #include "simulator.h"
 #include "scheduler.h"
@@ -24,7 +25,7 @@ enum class SchedulingMethod {
     MBFD
 };
 
-void runSimulation(const SchedulingMethod algorithm, std::vector<Task>& tasks, const std::string& output_path) {
+void runSimulation(const SchedulingMethod algorithm, std::vector<Task>& tasks, std::optional<std::string> output_path = std::nullopt) {
     std::unique_ptr<Scheduler> scheduler;
     QueuePolicy policy = QueuePolicy::FCFS;
 

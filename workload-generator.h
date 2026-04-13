@@ -21,17 +21,6 @@ class WorkloadGenerator {
 public:
     WorkloadGenerator(uint64_t seed = std::random_device{}()) : rng(seed), next_task_id(1) {}
 
-    std::vector<Task> generate(
-        int count,
-        DistributionType dist,
-        double cpu_mean,
-        double cpu_std,
-        double ram_mean,
-        double ram_std,
-        double durationMean,
-        double durationStd,
-        double arrivalRate = 1.0);
-
     std::vector<Task> generateRealisticCloudTraffic();
     std::vector<Task> generateLowLoad();
     std::vector<Task> generateSpikyLoad();

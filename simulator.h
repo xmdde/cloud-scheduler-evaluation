@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <memory>
+#include <optional>
 
 #include "scheduler.h"
 #include "task.h"
@@ -19,7 +20,7 @@ class Simulator {
 
 public:
     Simulator(std::unique_ptr<Scheduler> sched, int nodes_num);
-    void run(QueuePolicy policy, std::vector<Task>& tasks, const std::string& file_path);
+    void run(QueuePolicy policy, std::vector<Task>& tasks, std::optional<std::string> file_path);
 };
 
 #endif  // CLOUD_SCHEDULER_EVALUATION_SIMULATOR_H

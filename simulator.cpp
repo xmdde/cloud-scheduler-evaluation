@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iomanip>
 #include <memory>
+#include <optional>
 
 #include "request_queue.h"
 
@@ -17,27 +18,34 @@ Simulator::Simulator(std::unique_ptr<Scheduler> sched, int nodes_num)
     }
 }
 
-void Simulator::run(const QueuePolicy policy, std::vector<Task>& tasks, const std::string& file_path) {
+void Simulator::run(const QueuePolicy policy, std::vector<Task>& tasks, std::optional<std::string> file_path) {
     std::cout << "--------------------------\nRunning " << scheduler->getName() << "...\n";
 
-    // 1. Plik logów dla Hostów (Szeregi czasowe)
-    std::ofstream log(file_path);
-    log << "time,host_id,used_CPU,used_RAM,num_running,state,total_energy\n"; 
+    std::ofstream log;
+    std::ofstream tasks_log;
 
-    // 2. Plik logów dla Zadań (Czas oczekiwania / QoS)
-    std::string tasks_log_path = file_path;
-    size_t ext_pos = tasks_log_path.rfind(".csv");
-    if (ext_pos != std::string::npos) {
-        tasks_log_path.replace(ext_pos, 4, "_tasks.csv");
-    } else {
-        tasks_log_path += "_tasks.csv";
+    if (file_path.has_value()) {
+        log.open(*file_path);
+        if (log.is_open()) {
+            log << "time,host_id,used_CPU,used_RAM,num_running,state,total_energy\n";
+        }
+
+        std::string tasks_log_path = *file_path;
+        size_t ext_pos = tasks_log_path.rfind(".csv");
+        if (ext_pos != std::string::npos) {
+            tasks_log_path.replace(ext_pos, 4, "_tasks.csv");
+        } else {
+            tasks_log_path += "_tasks.csv";
+        }
+
+        tasks_log.open(tasks_log_path);
+        if (tasks_log.is_open()) {
+            tasks_log << "task_id,arrival_time,start_time,wait_time\n";
+        }
     }
-    std::ofstream tasks_log(tasks_log_path);
-    tasks_log << "task_id,arrival_time,start_time,wait_time\n";
 
     size_t next_idx = 0;
     double current_time = 0.0;
-
     RequestQueue global_queue(policy);
 
     while (next_idx < tasks.size() || !global_queue.empty() || !allNodesFinished()) {
@@ -51,17 +59,16 @@ void Simulator::run(const QueuePolicy policy, std::vector<Task>& tasks, const st
 
         auto it = global_queue.begin();
         while (it != global_queue.end()) {
-            // UWAGA: upewnij się, że scheduleTask modyfikuje it->start_time!
             bool success = scheduler->scheduleTask(*it, nodes, current_time);
             
             if (success) {
-                // Logowanie QoS do pliku zadań w momencie alokacji
-                double wait_time = it->start_time - it->arrival_time;
-                tasks_log << it->id << "," 
-                          << it->arrival_time << "," 
-                          << it->start_time << "," 
-                          << wait_time << "\n";
-                          
+                if (tasks_log.is_open()) {
+                    double wait_time = it->start_time - it->arrival_time;
+                    tasks_log << it->id << "," 
+                              << it->arrival_time << "," 
+                              << it->start_time << "," 
+                              << wait_time << "\n";
+                }
                 it = global_queue.erase(it);
             } else {
                 ++it;
@@ -74,19 +81,23 @@ void Simulator::run(const QueuePolicy policy, std::vector<Task>& tasks, const st
 
         current_time += TIME_STEP;
 
-        if (static_cast<int>(current_time) % TELEMETRY_INTERVAL == 0) {
+        if (log.is_open() && static_cast<int>(current_time) % TELEMETRY_INTERVAL == 0) {
             for (auto& node : nodes) {
                 node.logHostState(log, current_time);
             }
         }
     }
 
-    for (auto& node : nodes) {
-        node.logHostState(log, current_time);
+    if (log.is_open()) {
+        for (auto& node : nodes) {
+            node.logHostState(log, current_time);
+        }
+        log.close();
     }
-
-    log.close();
-    tasks_log.close(); // Zamknięcie pliku z zadaniami
+    
+    if (tasks_log.is_open()) {
+        tasks_log.close();
+    }
 
     std::cout << "Simulation complete. Makespan: " << current_time - TIME_STEP << '\n';
     double total_system_energy = 0.0;

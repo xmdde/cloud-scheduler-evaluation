@@ -9,7 +9,7 @@
 void saveWorkload(const std::vector<Task>& tasks, const std::string& filename) {
     std::ofstream out(filename);
     if (!out.is_open()) {
-        std::cerr << "Blad: Nie mozna utworzyc pliku " << filename << ".\n";
+        std::cerr << "ERR: cannot create file: " << filename << ".\n";
         return;
     }
 
@@ -48,17 +48,16 @@ std::vector<Task> loadWorkload(const std::string& filename) {
 
 int main(int argc, const char* argv[]) {
     if (argc < 2) {
-        std::cerr << "Uzycie:\n"
+        std::cerr << "Usage:\n"
                   << "  " << argv[0] << " --generate\n"
-                  << "  " << argv[0] << " --simulate <plik_obciazenia.csv> <prefix_wyniku>\n";
+                  << "  " << argv[0] << " --sim <load_file.csv> [output_prefix]\n";
         return 1;
     }
 
     std::string mode = argv[1];
 
     if (mode == "--generate") {
-        std::cout << "Generowanie 50 wektorow obciazenia Monte Carlo (Scenariusz Realistic)...\n";
-        
+        std::cout << "Generowanie wektorow obciazenia Monte Carlo (Scenariusz Realistic)...\n";
         for (int i = 0; i < 5; ++i) {
             WorkloadGenerator gen; 
             auto tasks = gen.generateRealisticCloudTraffic();
@@ -69,21 +68,36 @@ int main(int argc, const char* argv[]) {
         }
         return 0;
     } 
-    else if (mode == "--simulate" && argc == 4) {
-        std::string workload_file = argv[2];
-        std::string out_prefix = argv[3];
+    else if (mode == "--sim") {
+        if (argc < 3) {
+            std::cerr << "Blad: Flaga --sim wymaga podania pliku wejsciowego .csv\n";
+            return 1;
+        }
 
-        std::cout << "Wczytywanie zadan z pliku: " << workload_file << "\n";
+        std::string workload_file = argv[2];
         auto tasks = loadWorkload(workload_file);
 
-        runSimulation(SchedulingMethod::ROUND_ROBIN, tasks, out_prefix + "-RR.csv");
-        runSimulation(SchedulingMethod::BEST_FIT, tasks, out_prefix + "-BestFit.csv");
-        runSimulation(SchedulingMethod::WORST_FIT, tasks, out_prefix + "-WorstFit.csv");
-        runSimulation(SchedulingMethod::BFD, tasks, out_prefix + "-BFD.csv");
-        runSimulation(SchedulingMethod::MBFD, tasks, out_prefix + "-MBFD.csv");
+        std::optional<std::string> out_prefix = std::nullopt;
+        if (argc >= 4) {
+            out_prefix = argv[3];
+        }
+
+        auto get_path = [&](const std::string& suffix) -> std::optional<std::string> {
+            if (out_prefix) {
+                return *out_prefix + suffix;
+            }
+            return std::nullopt;
+        };
+
+        runSimulation(SchedulingMethod::ROUND_ROBIN, tasks, get_path("-RR.csv"));
+        runSimulation(SchedulingMethod::BEST_FIT, tasks, get_path("-BestFit.csv"));
+        runSimulation(SchedulingMethod::WORST_FIT, tasks, get_path("-WorstFit.csv"));
+        runSimulation(SchedulingMethod::BFD, tasks, get_path("-BFD.csv"));
+        runSimulation(SchedulingMethod::MBFD, tasks, get_path("-MBFD.csv"));
 
         return 0;
-    } else {
+    } 
+    else {
         std::cerr << "Nieznana flaga lub zla liczba argumentow.\n";
         return 1;
     }
