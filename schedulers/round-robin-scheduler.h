@@ -11,9 +11,8 @@ class RoundRobinScheduler : public Scheduler {
     size_t curr_node_idx = 0;
 
 public:
-    std::string getName() const override {
-        return "RoundRobin";
-    }
+    explicit RoundRobinScheduler() 
+        : Scheduler("RoundRobin") {}
 
     bool scheduleTask(Task& new_task, std::vector<Host>& nodes, double current_time) override;
 };

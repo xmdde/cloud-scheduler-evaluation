@@ -9,14 +9,6 @@ bool Host::canRun(const Task& t) const {
     return used_CPU + t.cpu_required <= total_CPU && used_RAM + t.ram_required <= total_RAM;
 }
 
-void Host::logHostState(std::ofstream& log, double current_time) const {
-    log << std::fixed << std::setprecision(2);
-    log << current_time << "," << id << ","
-        << used_CPU << "," << used_RAM << ","
-        << getRunningNum() << "," << state << ","
-        << total_energy << "\n";
-}
-
 void Host::assignTask(Task& t, double current_time) {
     if (canRun(t)) {
         used_CPU += t.cpu_required;
@@ -93,7 +85,7 @@ void Host::removeFinishedTasks(const double current_time) {
     }
 }
 
-void Host::updateState(const double time_step) {
+void Host::updateState(double time_step) {
     // State machine
     if (state == PowerState::BOOTING) {
         boot_timer -= time_step;

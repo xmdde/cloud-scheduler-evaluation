@@ -10,9 +10,8 @@
 
 class WorstFitScheduler : public Scheduler {
 public:
-    std::string getName() const override {
-        return "WorstFit";
-    }
+    explicit WorstFitScheduler(std::string custom_name = "WorstFit") 
+        : Scheduler(std::move(custom_name)) {}
 
     bool scheduleTask(Task& new_task, std::vector<Host>& nodes, double current_time) override;
 private:

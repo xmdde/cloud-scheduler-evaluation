@@ -21,11 +21,11 @@ enum class SchedulingMethod {
     BEST_FIT,
     BFD,
     WORST_FIT,
-    LOAD,
     MBFD
 };
 
-void runSimulation(const SchedulingMethod algorithm, std::vector<Task>& tasks, std::optional<std::string> output_path = std::nullopt) {
+void runSimulation(const SchedulingMethod algorithm, std::vector<Task>& tasks,
+                   std::optional<std::string> output_path = std::nullopt) {
     std::unique_ptr<Scheduler> scheduler;
     QueuePolicy policy = QueuePolicy::FCFS;
 
@@ -39,14 +39,14 @@ void runSimulation(const SchedulingMethod algorithm, std::vector<Task>& tasks, s
             break;
 
         case SchedulingMethod::BFD:
-            scheduler = std::make_unique<BestFitScheduler>();
+            scheduler = std::make_unique<BestFitScheduler>("BFD");
             policy = QueuePolicy::DECREASING_CPU;
             break;
-        
+
         case SchedulingMethod::WORST_FIT:
             scheduler = std::make_unique<WorstFitScheduler>();
             break;
-        
+
         case SchedulingMethod::MBFD:
             scheduler = std::make_unique<MBFDScheduler>();
             policy = QueuePolicy::DECREASING_CPU;
