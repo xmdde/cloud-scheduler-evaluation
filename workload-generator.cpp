@@ -4,7 +4,7 @@
 constexpr float SECONDS_PER_DAY = 86400.0;
 
 Task generateRealisticVM(std::mt19937& rng, int& next_task_id, double current_time) {
-    std::discrete_distribution<> vm_type_dist({70.0, 20.0, 10.0});
+    std::discrete_distribution<> vm_type_dist({80.0, 15.0, 5.0});
     int type = vm_type_dist(rng);
     
     double duration = 0.0, cpu = 0.0, ram = 0.0;

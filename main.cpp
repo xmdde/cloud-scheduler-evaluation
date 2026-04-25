@@ -57,18 +57,16 @@ int main(int argc, const char* argv[]) {
     std::string mode = argv[1];
 
     if (mode == "--generate") {
-        std::cout << "Generowanie wektorow obciazenia Monte Carlo (Scenariusz Realistic)...\n";
-        for (int i = 0; i < 5; ++i) {
+        for (int i = 0; i < 50; ++i) {
             WorkloadGenerator gen; 
             auto tasks = gen.generateRealisticCloudTraffic();
 
-            std::string filename = "workloads/seed_" + std::to_string(i) + ".csv";
+            std::string filename = "workloads/realistic/seed_" + std::to_string(i) + ".csv";
             saveWorkload(tasks, filename);
             std::cout << "Saved: " << filename << " (" << tasks.size() << " tasks)\n";
         }
         return 0;
-    } 
-    else if (mode == "--sim") {
+    } else if (mode == "--sim") {
         if (argc < 3) {
             std::cerr << "Blad: Flaga --sim wymaga podania pliku wejsciowego .csv\n";
             return 1;

@@ -14,7 +14,7 @@
 #include "worst-fit-scheduler.h"
 #include "mbfd-scheduler.h"
 
-constexpr int HOSTS_NUM = 16;
+constexpr int HOSTS_NUM = 32;
 
 enum class SchedulingMethod {
     ROUND_ROBIN,

@@ -14,7 +14,7 @@
 Simulator::Simulator(std::unique_ptr<Scheduler> sched, int nodes_num)
     : scheduler(std::move(sched)) {
     for (int i = 0; i < nodes_num / 2; ++i) {
-        nodes.push_back({i, 32.0, 128.0}); 
+        nodes.push_back({i, 32.0, 128.0});
     }
 
     for (int i = 0; i < nodes_num / 2; ++i) {
@@ -61,7 +61,7 @@ void Simulator::run(const QueuePolicy policy, std::span<Task> tasks, std::option
         while (it != global_queue.end()) {
             if (scheduler->scheduleTask(*it, nodes, current_time)) {
                 if (tasks_log.is_open()) {
-                    tasks_log << std::format("{},{},{},{}\n", it->id, it->arrival_time, it->start_time, it->start_time - it->arrival_time);
+                    tasks_log << std::format("{},{},{},{:.2f}\n", it->id, it->arrival_time, it->start_time, it->start_time - it->arrival_time);
                 }
                 total_wait_time += (it->start_time - it->arrival_time);
                 ++completed_tasks;
@@ -98,7 +98,6 @@ void Simulator::run(const QueuePolicy policy, std::span<Task> tasks, std::option
         0.0
     );
     const double avg_wait_time = completed_tasks > 0 ? total_wait_time / completed_tasks : 0.0;
-
     std::cout << std::format("{:.2f} {:.2f} {:.2f}\n", total_system_energy, current_time - TIME_STEP, avg_wait_time);  // total energy [J], makespan
 }
 
