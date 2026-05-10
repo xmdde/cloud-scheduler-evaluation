@@ -39,7 +39,7 @@ void Host::assignTask(Task& t, double current_time) {
 double Host::getInstantaneousPower() const {
     switch (state) {
         case PowerState::SLEEP:
-            return 0.0; // or P_SLEEP?
+            return P_SLEEP;
 
         case PowerState::IDLE:
             return P_IDLE; 
@@ -50,7 +50,7 @@ double Host::getInstantaneousPower() const {
         case PowerState::ACTIVE: {
             double u = used_CPU / total_CPU;
             if (u > 1.0)
-                u = 1.0; 
+                u = 1.0;
             return P_IDLE + (P_MAX - P_IDLE) * u;
         }
     }

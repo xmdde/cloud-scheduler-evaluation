@@ -33,7 +33,8 @@ class Host {
     static constexpr double k = 0.3;
     static constexpr double P_MAX = 250.0;
     const double P_IDLE = k * P_MAX;
-    const double P_BOOT = 350.0;
+    static constexpr double P_BOOT = 350.0;
+    static constexpr double P_SLEEP = 10.0;
 
 public:
     const int id;
@@ -55,6 +56,7 @@ public:
     void updateState(double time_step);
     double getInstantaneousPower() const;
     double getExpectedPowerIncrease(const Task& t) const;
+
     size_t getRunningNum() const { return running.size(); }
     PowerState getState() const { return state; }
 };

@@ -61,7 +61,7 @@ int main(int argc, const char* argv[]) {
             WorkloadGenerator gen; 
             auto tasks = gen.generateRealisticCloudTraffic();
 
-            std::string filename = "workloads/realistic/seed_" + std::to_string(i) + ".csv";
+            std::string filename = "workloads/realstic/seed_" + std::to_string(i) + ".csv";
             saveWorkload(tasks, filename);
             std::cout << "Saved: " << filename << " (" << tasks.size() << " tasks)\n";
         }
