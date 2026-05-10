@@ -33,7 +33,8 @@ class Host {
     static constexpr double k = 0.3;
     static constexpr double P_MAX = 250.0;
     const double P_IDLE = k * P_MAX;
-    const double P_BOOT = 350.0;
+    static constexpr double P_BOOT = 350.0;
+    static constexpr double P_SLEEP = 10.0;
 
 public:
     const int id;
@@ -48,20 +49,16 @@ public:
     Host(int id_, double cpu, double ram)
         : id(id_), total_CPU(cpu), total_RAM(ram){}
 
-    void logHostState(std::ofstream& log, const double current_time) const;
     bool canRun(const Task& t) const;
-    void assignTask(const Task& t, double current_time);
+    void assignTask(Task& t, double current_time);
     void tick(double current_time, double time_step);
     void removeFinishedTasks(const double current_time);
-    void updateState(const double time_step);
+    void updateState(double time_step);
     double getInstantaneousPower() const;
-
-    size_t getRunningNum() const {
-        return running.size();
-    }
-
-    PowerState getState() const { return state; }
     double getExpectedPowerIncrease(const Task& t) const;
+
+    size_t getRunningNum() const { return running.size(); }
+    PowerState getState() const { return state; }
 };
 
 #endif  // CLOUD_SCHEDULER_EVALUATION_HOST_H

@@ -9,31 +9,26 @@ bool Host::canRun(const Task& t) const {
     return used_CPU + t.cpu_required <= total_CPU && used_RAM + t.ram_required <= total_RAM;
 }
 
-void Host::logHostState(std::ofstream& log, double current_time) const {
-    log << std::fixed << std::setprecision(2);
-    log << current_time << "," << id << ","
-        << used_CPU << "," << used_RAM << ","
-        << getRunningNum() << "," << state << ","
-        << total_energy << "\n";
-}
-
-void Host::assignTask(const Task& t, double current_time) {
+void Host::assignTask(Task& t, double current_time) {
     if (canRun(t)) {
         used_CPU += t.cpu_required;
         used_RAM += t.ram_required;
 
-        double finish_time = current_time + t.duration;
+        double actual_start_time = current_time;
 
         if (state == PowerState::SLEEP) {
             state = PowerState::BOOTING;
             boot_timer = BOOT_DELAY;
-            finish_time += BOOT_DELAY;
+            actual_start_time += BOOT_DELAY;
         } else if (state == PowerState::BOOTING) {
-            finish_time += boot_timer;
+            actual_start_time += boot_timer;
         } else if (state == PowerState::IDLE) {
             state = PowerState::ACTIVE;
             idle_timer = 0.0;
         }
+
+        t.start_time = actual_start_time;
+        double finish_time = actual_start_time + t.duration;
 
         running.push_back({t, finish_time});
     } else {
@@ -44,7 +39,7 @@ void Host::assignTask(const Task& t, double current_time) {
 double Host::getInstantaneousPower() const {
     switch (state) {
         case PowerState::SLEEP:
-            return 0.0; // or P_SLEEP?
+            return P_SLEEP;
 
         case PowerState::IDLE:
             return P_IDLE; 
@@ -55,7 +50,7 @@ double Host::getInstantaneousPower() const {
         case PowerState::ACTIVE: {
             double u = used_CPU / total_CPU;
             if (u > 1.0)
-                u = 1.0; 
+                u = 1.0;
             return P_IDLE + (P_MAX - P_IDLE) * u;
         }
     }
@@ -90,7 +85,7 @@ void Host::removeFinishedTasks(const double current_time) {
     }
 }
 
-void Host::updateState(const double time_step) {
+void Host::updateState(double time_step) {
     // State machine
     if (state == PowerState::BOOTING) {
         boot_timer -= time_step;

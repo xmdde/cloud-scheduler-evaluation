@@ -2,6 +2,7 @@
 #define CLOUD_SCHEDULER_EVALUATION_UTILS_H
 
 #include <memory>
+#include <optional>
 
 #include "simulator.h"
 #include "scheduler.h"
@@ -13,18 +14,18 @@
 #include "worst-fit-scheduler.h"
 #include "mbfd-scheduler.h"
 
-constexpr int HOSTS_NUM = 16;
+constexpr int HOSTS_NUM = 32;
 
 enum class SchedulingMethod {
     ROUND_ROBIN,
     BEST_FIT,
     BFD,
     WORST_FIT,
-    LOAD,
     MBFD
 };
 
-void runSimulation(const SchedulingMethod algorithm, std::vector<Task>& tasks, const std::string& output_path) {
+void runSimulation(const SchedulingMethod algorithm, std::vector<Task>& tasks,
+                   std::optional<std::string> output_path = std::nullopt) {
     std::unique_ptr<Scheduler> scheduler;
     QueuePolicy policy = QueuePolicy::FCFS;
 
@@ -38,14 +39,14 @@ void runSimulation(const SchedulingMethod algorithm, std::vector<Task>& tasks, c
             break;
 
         case SchedulingMethod::BFD:
-            scheduler = std::make_unique<BestFitScheduler>();
+            scheduler = std::make_unique<BestFitScheduler>("BFD");
             policy = QueuePolicy::DECREASING_CPU;
             break;
-        
+
         case SchedulingMethod::WORST_FIT:
             scheduler = std::make_unique<WorstFitScheduler>();
             break;
-        
+
         case SchedulingMethod::MBFD:
             scheduler = std::make_unique<MBFDScheduler>();
             policy = QueuePolicy::DECREASING_CPU;

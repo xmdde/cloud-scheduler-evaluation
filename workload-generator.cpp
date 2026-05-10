@@ -4,7 +4,7 @@
 constexpr float SECONDS_PER_DAY = 86400.0;
 
 Task generateRealisticVM(std::mt19937& rng, int& next_task_id, double current_time) {
-    std::discrete_distribution<> vm_type_dist({70.0, 20.0, 10.0});
+    std::discrete_distribution<> vm_type_dist({80.0, 15.0, 5.0});
     int type = vm_type_dist(rng);
     
     double duration = 0.0, cpu = 0.0, ram = 0.0;
@@ -36,11 +36,12 @@ Task generateRealisticVM(std::mt19937& rng, int& next_task_id, double current_ti
 
 // ------------------------------------------------------------------------
 // SCENARIUSZ A: LOW LOAD
+// Utylizacja klastra: ok. 25-30%. Pokazuje, jak dobrze algorytmy usypiają węzły.
 // ------------------------------------------------------------------------
 std::vector<Task> WorkloadGenerator::generateLowLoad() {
     std::vector<Task> tasks;
     double current_arrival = 0.0;
-    std::exponential_distribution<double> arrivalDist(1.0 / 200.0); 
+    std::exponential_distribution<double> arrivalDist(1.0 / 180.0); // 1 zadanie co 3 min
 
     while (current_arrival < SECONDS_PER_DAY) {
         current_arrival += arrivalDist(rng);
@@ -53,11 +54,12 @@ std::vector<Task> WorkloadGenerator::generateLowLoad() {
 
 // ------------------------------------------------------------------------
 // SCENARIUSZ B: HIGH LOAD
+// Utylizacja klastra: ok. 85-90%. Wymusza trzymanie wszystkich serwerów Active.
 // ------------------------------------------------------------------------
 std::vector<Task> WorkloadGenerator::generateHighLoad() {
     std::vector<Task> tasks;
     double current_arrival = 0.0;
-    std::exponential_distribution<double> arrivalDist(1.0 / 35.0); 
+    std::exponential_distribution<double> arrivalDist(1.0 / 50.0); 
 
     while (current_arrival < SECONDS_PER_DAY) {
         current_arrival += arrivalDist(rng);
@@ -70,24 +72,25 @@ std::vector<Task> WorkloadGenerator::generateHighLoad() {
 
 // ------------------------------------------------------------------------
 // SCENARIUSZ C: REALISTIC MIXED TRAFFIC
+// Cykl dobowy: Noc (ok. 20%), Dzień Szczyt (ok. 75%), Wieczór (ok. 40%).
 // ------------------------------------------------------------------------
 std::vector<Task> WorkloadGenerator::generateRealisticCloudTraffic() {
     std::vector<Task> tasks;
     double current_arrival = 0.0;
     
-    std::exponential_distribution<double> nightDist(1.0 / 150.0);
-    std::exponential_distribution<double> dayDist(1.0 / 40.0);
-    std::exponential_distribution<double> eveningDist(1.0 / 90.0);
+    std::exponential_distribution<double> nightDist(1.0 / 200.0);
+    std::exponential_distribution<double> dayDist(1.0 / 60.0);
+    std::exponential_distribution<double> eveningDist(1.0 / 100.0);
 
     while (current_arrival < SECONDS_PER_DAY) {
-        if (current_arrival < 28800.0) {
+        if (current_arrival < 28800.0) { // 0:00 - 8:00
             current_arrival += nightDist(rng);
-        } else if (current_arrival < 57600.0) {
+        } else if (current_arrival < 57600.0) { // 8:00 - 16:00
             current_arrival += dayDist(rng);
-        } else {
+        } else { // 16:00 - 24:00
             current_arrival += eveningDist(rng);
         }
-        
+
         if (current_arrival < SECONDS_PER_DAY) {
             tasks.push_back(generateRealisticVM(rng, next_task_id, current_arrival));
         }
@@ -97,18 +100,19 @@ std::vector<Task> WorkloadGenerator::generateRealisticCloudTraffic() {
 
 // ------------------------------------------------------------------------
 // SCENARIUSZ D: SPIKY LOAD
+// Tło na poziomie ~20%, ale z trzema potężnymi uderzeniami przekraczającymi limit.
 // ------------------------------------------------------------------------
 std::vector<Task> WorkloadGenerator::generateSpikyLoad() {
     std::vector<Task> tasks;
     double current_arrival = 0.0;
-    
-    std::exponential_distribution<double> spikeDist(1.0 / 15.0);
-    std::exponential_distribution<double> backgroundDist(1.0 / 400.0); // Tło
+
+    std::exponential_distribution<double> spikeDist(1.0 / 25.0);
+    std::exponential_distribution<double> backgroundDist(1.0 / 300.0);
 
     while(current_arrival < SECONDS_PER_DAY) {
-        bool in_spike = (current_arrival >= 28800.0 && current_arrival < 36000.0) ||
-                        (current_arrival >= 50400.0 && current_arrival < 57600.0) ||
-                        (current_arrival >= 72000.0 && current_arrival < 79200.0);
+        bool in_spike = (current_arrival >= 28800.0 && current_arrival < 36000.0) || // Spike 1: 8:00 - 10:00
+                        (current_arrival >= 50400.0 && current_arrival < 57600.0) || // Spike 2: 14:00 - 16:00
+                        (current_arrival >= 72000.0 && current_arrival < 79200.0);   // Spike 3: 20:00 - 22:00
         
         if (in_spike) {
             current_arrival += spikeDist(rng);

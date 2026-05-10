@@ -10,11 +10,10 @@
 
 class BestFitScheduler : public Scheduler {
 public:
-    std::string getName() const override {
-        return "BestFit";
-    }
+    explicit BestFitScheduler(std::string custom_name = "BestFit") 
+        : Scheduler(std::move(custom_name)) {}
 
-    bool scheduleTask(const Task& new_task, std::vector<Host>& nodes, double current_time) override;
+    bool scheduleTask(Task& new_task, std::vector<Host>& nodes, double current_time) override;
 private:
     double calculateScore(const Host& host, const Task& task) const;
     Host* findBestNode(const Task& task, std::vector<Host>& nodes) const;

@@ -21,7 +21,21 @@ public:
 
     bool empty() const { return queue.empty(); }
 
-    void addRequests(const std::vector<Task>& new_tasks);
+    template <typename R>
+    void addRequests(R&& new_tasks) {
+        if (std::ranges::empty(new_tasks))
+            return;
+
+        for (const auto& task : new_tasks) {
+            queue.push_back(task);
+        }
+
+        if (policy == QueuePolicy::DECREASING_CPU) {
+            std::ranges::sort(queue, [](const Task& a, const Task& b) {
+                return a.cpu_required > b.cpu_required;
+            });
+        }
+    }
 
     auto begin() {
         return queue.begin();
@@ -33,5 +47,9 @@ public:
 
     auto erase(decltype(queue.begin()) it) {
         return queue.erase(it);
+    }
+
+    auto size() const {
+        return queue.size();
     }
 };

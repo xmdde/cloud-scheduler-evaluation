@@ -6,11 +6,10 @@
 
 class MBFDScheduler : public Scheduler {
 public:
-    bool scheduleTask(const Task& task, std::vector<Host>& nodes, double current_time) override;
+    explicit MBFDScheduler() 
+        : Scheduler("MBFD") {}
 
-    std::string getName() const override {
-        return "MBFD";
-    }
+    bool scheduleTask(Task& task, std::vector<Host>& nodes, double current_time) override;
 private:
     Host* findTargetNode(const Task& task, std::vector<Host>& nodes) const;
 };
