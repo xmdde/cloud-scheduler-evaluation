@@ -64,11 +64,11 @@ void Simulator::run(const QueuePolicy policy, std::span<Task> tasks, std::option
         while (it != global_queue.end()) {
             if (scheduler->scheduleTask(*it, nodes, current_time)) {
                 double wait_time = it->start_time - it->arrival_time;
-                
+
                 if (tasks_log.is_open()) {
                     tasks_log << std::format("{},{},{},{:.2f}\n", it->id, it->arrival_time, it->start_time, wait_time);
                 }
-                
+
                 total_wait_time += wait_time;
 
                 ++completed_tasks;

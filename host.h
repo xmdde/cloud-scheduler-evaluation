@@ -23,8 +23,8 @@ class Host {
     PowerState state = PowerState::SLEEP;
 
     static constexpr double IDLE_TIMEOUT = 300.0;
-    static constexpr double BOOT_DELAY = 55.0;
-    
+    static constexpr double BOOT_DELAY = 45.0;
+
     double idle_timer = 0.0;
     double boot_timer = 0.0;
 

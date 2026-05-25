@@ -13,12 +13,12 @@ Task generateRealisticVM(std::mt19937& rng, int& next_task_id, double current_ti
         cpu = std::uniform_real_distribution<double>(1.0, 4.0)(rng);
         ram = std::uniform_real_distribution<double>(2.0, 8.0)(rng);
         duration = std::uniform_real_distribution<double>(300.0, 1800.0)(rng);
-    } 
+    }
     else if (type == 1) { // Średnie zadania (2-6 h)
         cpu = std::uniform_real_distribution<double>(4.0, 8.0)(rng);
         ram = std::uniform_real_distribution<double>(8.0, 16.0)(rng);
         duration = std::uniform_real_distribution<double>(7200.0, 21600.0)(rng);
-    } 
+    }
     else { // Długie zadania (8-12 h)
         cpu = std::uniform_real_distribution<double>(8.0, 16.0)(rng);
         ram = std::uniform_real_distribution<double>(16.0, 32.0)(rng);
@@ -34,14 +34,14 @@ Task generateRealisticVM(std::mt19937& rng, int& next_task_id, double current_ti
     return t;
 }
 
-// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 // SCENARIUSZ A: LOW LOAD
 // Utylizacja klastra: ok. 25-30%. Pokazuje, jak dobrze algorytmy usypiają węzły.
-// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 std::vector<Task> WorkloadGenerator::generateLowLoad() {
     std::vector<Task> tasks;
     double current_arrival = 0.0;
-    std::exponential_distribution<double> arrivalDist(1.0 / 180.0); // 1 zadanie co 3 min
+    std::exponential_distribution<double> arrivalDist(1.0 / 120.0);
 
     while (current_arrival < SECONDS_PER_DAY) {
         current_arrival += arrivalDist(rng);
@@ -59,7 +59,7 @@ std::vector<Task> WorkloadGenerator::generateLowLoad() {
 std::vector<Task> WorkloadGenerator::generateHighLoad() {
     std::vector<Task> tasks;
     double current_arrival = 0.0;
-    std::exponential_distribution<double> arrivalDist(1.0 / 50.0); 
+    std::exponential_distribution<double> arrivalDist(1.0 / 38.0); 
 
     while (current_arrival < SECONDS_PER_DAY) {
         current_arrival += arrivalDist(rng);
@@ -78,9 +78,9 @@ std::vector<Task> WorkloadGenerator::generateRealisticCloudTraffic() {
     std::vector<Task> tasks;
     double current_arrival = 0.0;
     
-    std::exponential_distribution<double> nightDist(1.0 / 200.0);
-    std::exponential_distribution<double> dayDist(1.0 / 60.0);
-    std::exponential_distribution<double> eveningDist(1.0 / 100.0);
+    std::exponential_distribution<double> nightDist(1.0 / 150.0);
+    std::exponential_distribution<double> dayDist(1.0 / 45.0);
+    std::exponential_distribution<double> eveningDist(1.0 / 80.0);
 
     while (current_arrival < SECONDS_PER_DAY) {
         if (current_arrival < 28800.0) { // 0:00 - 8:00
@@ -100,13 +100,13 @@ std::vector<Task> WorkloadGenerator::generateRealisticCloudTraffic() {
 
 // ------------------------------------------------------------------------
 // SCENARIUSZ D: SPIKY LOAD
-// Tło na poziomie ~20%, ale z trzema potężnymi uderzeniami przekraczającymi limit.
+// Tło na poziomie ~20%, ale z trzema uderzeniami przekraczającymi limit.
 // ------------------------------------------------------------------------
 std::vector<Task> WorkloadGenerator::generateSpikyLoad() {
     std::vector<Task> tasks;
     double current_arrival = 0.0;
 
-    std::exponential_distribution<double> spikeDist(1.0 / 25.0);
+    std::exponential_distribution<double> spikeDist(1.0 / 20.0);
     std::exponential_distribution<double> backgroundDist(1.0 / 300.0);
 
     while(current_arrival < SECONDS_PER_DAY) {

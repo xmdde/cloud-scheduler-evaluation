@@ -58,10 +58,10 @@ int main(int argc, const char* argv[]) {
 
     if (mode == "--generate") {
         for (int i = 0; i < 50; ++i) {
-            WorkloadGenerator gen; 
-            auto tasks = gen.generateRealisticCloudTraffic();
+            WorkloadGenerator gen;
+            auto tasks = gen.generateSpikyLoad();
 
-            std::string filename = "workloads/realstic/seed_" + std::to_string(i) + ".csv";
+            std::string filename = "workloads/spiky/seed_" + std::to_string(i) + ".csv";
             saveWorkload(tasks, filename);
             std::cout << "Saved: " << filename << " (" << tasks.size() << " tasks)\n";
         }

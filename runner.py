@@ -4,11 +4,8 @@ import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from tqdm import tqdm
 
-# ==========================================
-# KONFIGURACJA EKSPERYMENTU
-# ==========================================
 EXEC_PATH = "./cloud-sim"
-SCENARIO = "realistic" # high/low/spiky/realistic
+SCENARIO = "low" # high/low/spiky/realistic
 
 WORKLOAD_DIR = f"workloads/{SCENARIO}"
 OUTPUT_DIR = f"output/{SCENARIO}"
