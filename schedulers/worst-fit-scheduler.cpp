@@ -48,5 +48,5 @@ double WorstFitScheduler::calculateScore(const Host &host, const Task &task) con
     const double cpu_tb_left = host.total_CPU - (host.used_CPU + task.cpu_required);
     const double ram_tb_left = host.total_RAM - (host.used_RAM + task.ram_required);
 
-    return cpu_tb_left + ram_tb_left;
+    return (cpu_tb_left / host.total_CPU) + (ram_tb_left / host.total_RAM);
 }

@@ -1,16 +1,28 @@
-## Task Scheduling in Cloud Computing Systems
+# Cloud-Sim: Symulator Szeregowania Zadań
 
-### to-do:
-- [X] Round Robin
-- [ ] FirstFit
-- [X] BestFit, WorstFit
-- [ ] ^ Decreasing
-- [ ] MBFD Algorithm
-- [ ] logger
-- [X] fix setting the end of simulation/get makespan
-- [ ] log training data + linear regression??
-- [ ] tests
-- [ ] migrations?
-- [ ] improve logic of turning on/off hosts (finite states)
-- [ ] add boot delay when turning on
-- [ ] execute simulations with proper params
+## Opis projektu
+Cloud-Sim to narzędzie do symulacji algorytmów szeregowania zadań w chmurze. Pozwala generować obciążenia o różnej charakterystyce i testować wydajność algorytmów szeregowania pod kątem efektywności energetycznej.
+
+## Kompilacja
+Projekt korzysta z `make` oraz kompilatora `g++`.
+- `make`       : Kompiluje projekt i tworzy plik wykonywalny `cloud-sim`.
+- `make clean` : Usuwa plik wykonywalny i czyści projekt.
+
+## Przygotowanie środowiska
+Wymagana jest struktura folderów wewnątrz `workloads`. Przed pierwszym użyciem utwórz je komendą:
+`mkdir -p workloads/realistic workloads/low workloads/high workloads/spiky`
+
+## Instrukcja obsługi
+
+### 1. Generowanie danych wejściowych
+Tryb tworzy 50 plików `.csv` z danymi dla wybranego scenariusza.
+- **Komenda:** `./cloud-sim --generate <scenariusz>`
+- **Scenariusze:** `realistic`, `low`, `high`, `spiky`
+- **Przykład:** `./cloud-sim --generate spiky`
+
+### 2. Uruchomienie symulacji
+Tryb wykonuje obliczenia dla przygotowanego pliku wejściowego przy użyciu dostępnych algorytmów.
+- **Komenda:** `./cloud-sim --sim <plik_wejsciowy.csv> [prefiks_wynikow]`
+- **Przykład:** `./cloud-sim --sim workloads/spiky/seed_0.csv test_1`
+
+Po zakończeniu symulacji program generuje raport zawierający kluczowe metryki wydajności dla każdego algorytmu, obejmujące zużycie energii, całkowity czas trwania symulacji, średni czas oczekiwania zadań oraz poziom utylizacji sktywnych węzłów.

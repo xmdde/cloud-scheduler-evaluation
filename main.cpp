@@ -49,7 +49,7 @@ std::vector<Task> loadWorkload(const std::string& filename) {
 int main(int argc, const char* argv[]) {
     if (argc < 2) {
         std::cerr << "Usage:\n"
-                  << "  " << argv[0] << " --generate\n"
+                  << "  " << argv[0] << " --generate <realistic|low|high|spiky>\n"
                   << "  " << argv[0] << " --sim <load_file.csv> [output_prefix]\n";
         return 1;
     }
@@ -57,18 +57,40 @@ int main(int argc, const char* argv[]) {
     std::string mode = argv[1];
 
     if (mode == "--generate") {
+        if (argc < 3) {
+            std::cerr << "Error: --generate requires a scenario name (realistic, low, high, spiky).\n";
+            return 1;
+        }
+
+        std::string scenario = argv[2];
+        std::string folder = "workloads/" + scenario + "/";
+
         for (int i = 0; i < 50; ++i) {
             WorkloadGenerator gen;
-            auto tasks = gen.generateSpikyLoad();
+            std::vector<Task> tasks;
 
-            std::string filename = "workloads/spiky/seed_" + std::to_string(i) + ".csv";
+            if (scenario == "realistic") {
+                tasks = gen.generateRealisticCloudTraffic();
+            } else if (scenario == "low") {
+                tasks = gen.generateLowLoad();
+            } else if (scenario == "high") {
+                tasks = gen.generateHighLoad();
+            } else if (scenario == "spiky") {
+                tasks = gen.generateSpikyLoad();
+            } else {
+                std::cerr << "Error: Unknown scenario '" << scenario << "'.\n";
+                return 1;
+            }
+
+            std::string filename = folder + "seed_" + std::to_string(i) + ".csv";
             saveWorkload(tasks, filename);
             std::cout << "Saved: " << filename << " (" << tasks.size() << " tasks)\n";
         }
         return 0;
+
     } else if (mode == "--sim") {
         if (argc < 3) {
-            std::cerr << "Blad: Flaga --sim wymaga podania pliku wejsciowego .csv\n";
+            std::cerr << "Error: --sim requires an input .csv file.\n";
             return 1;
         }
 
@@ -94,9 +116,8 @@ int main(int argc, const char* argv[]) {
         runSimulation(SchedulingMethod::MBFD, tasks, get_path("-MBFD.csv"));
 
         return 0;
-    } 
-    else {
-        std::cerr << "Nieznana flaga lub zla liczba argumentow.\n";
+    } else {
+        std::cerr << "Error: Invalid flag or incorrect number of arguments.\n";
         return 1;
     }
 }
