@@ -36,7 +36,6 @@ Task generateRealisticVM(std::mt19937& rng, int& next_task_id, double current_ti
 
 // ------------------------------------------------------------------------------
 // SCENARIUSZ A: LOW LOAD
-// Utylizacja klastra: ok. 25-30%. Pokazuje, jak dobrze algorytmy usypiają węzły.
 // ------------------------------------------------------------------------------
 std::vector<Task> WorkloadGenerator::generateLowLoad() {
     std::vector<Task> tasks;
@@ -54,7 +53,6 @@ std::vector<Task> WorkloadGenerator::generateLowLoad() {
 
 // ------------------------------------------------------------------------
 // SCENARIUSZ B: HIGH LOAD
-// Utylizacja klastra: ok. 85-90%. Wymusza trzymanie wszystkich serwerów Active.
 // ------------------------------------------------------------------------
 std::vector<Task> WorkloadGenerator::generateHighLoad() {
     std::vector<Task> tasks;
@@ -71,8 +69,7 @@ std::vector<Task> WorkloadGenerator::generateHighLoad() {
 }
 
 // ------------------------------------------------------------------------
-// SCENARIUSZ C: REALISTIC MIXED TRAFFIC
-// Cykl dobowy: Noc (ok. 20%), Dzień Szczyt (ok. 75%), Wieczór (ok. 40%).
+// SCENARIUSZ C: REALISTIC TRAFFIC
 // ------------------------------------------------------------------------
 std::vector<Task> WorkloadGenerator::generateRealisticCloudTraffic() {
     std::vector<Task> tasks;
@@ -100,7 +97,6 @@ std::vector<Task> WorkloadGenerator::generateRealisticCloudTraffic() {
 
 // ------------------------------------------------------------------------
 // SCENARIUSZ D: SPIKY LOAD
-// Tło na poziomie ~20%, ale z trzema uderzeniami przekraczającymi limit.
 // ------------------------------------------------------------------------
 std::vector<Task> WorkloadGenerator::generateSpikyLoad() {
     std::vector<Task> tasks;

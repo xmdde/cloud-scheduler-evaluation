@@ -1,16 +1,12 @@
 # Cloud-Sim: Symulator Szeregowania Zadań
 
 ## Opis projektu
-Cloud-Sim to narzędzie do symulacji algorytmów szeregowania zadań w chmurze. Pozwala generować obciążenia o różnej charakterystyce i testować wydajność algorytmów szeregowania pod kątem efektywności energetycznej.
+Cloud-Sim to narzędzie do symulacji algorytmów szeregowania zadań w chmurze. Pozwala generować obciążenia o różnej charakterystyce i testować wydajność algorytmów pod kątem efektywności energetycznej.
 
 ## Kompilacja
 Projekt korzysta z `make` oraz kompilatora `g++`.
 - `make`       : Kompiluje projekt i tworzy plik wykonywalny `cloud-sim`.
 - `make clean` : Usuwa plik wykonywalny i czyści projekt.
-
-## Przygotowanie środowiska
-Wymagana jest struktura folderów wewnątrz `workloads`. Przed pierwszym użyciem utwórz je komendą:
-`mkdir -p workloads/realistic workloads/low workloads/high workloads/spiky`
 
 ## Instrukcja obsługi
 
@@ -25,4 +21,4 @@ Tryb wykonuje obliczenia dla przygotowanego pliku wejściowego przy użyciu dost
 - **Komenda:** `./cloud-sim --sim <plik_wejsciowy.csv> [prefiks_wynikow]`
 - **Przykład:** `./cloud-sim --sim workloads/spiky/seed_0.csv test_1`
 
-Po zakończeniu symulacji program generuje raport zawierający kluczowe metryki wydajności dla każdego algorytmu, obejmujące zużycie energii, całkowity czas trwania symulacji, średni czas oczekiwania zadań oraz poziom utylizacji sktywnych węzłów.
+Po zakończeniu symulacji program generuje raport zawierający kluczowe metryki wydajności dla każdego algorytmu, obejmujące zużycie energii, całkowity czas trwania symulacji, średni czas oczekiwania zadań oraz poziom utylizacji aktywnych węzłów.

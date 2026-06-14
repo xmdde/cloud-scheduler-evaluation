@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
+#include <filesystem>
 
 #include "host.h"
 #include "utils.h"
@@ -64,6 +65,15 @@ int main(int argc, const char* argv[]) {
 
         std::string scenario = argv[2];
         std::string folder = "workloads/" + scenario + "/";
+
+        if (!std::filesystem::exists(folder)) {
+            if (std::filesystem::create_directories(folder)) {
+                std::cout << "Successfully created directory: " << folder << "\n";
+            } else {
+                std::cerr << "Error: Could not create directory: " << folder << "\n";
+                return 1;
+            }
+        }
 
         for (int i = 0; i < 50; ++i) {
             WorkloadGenerator gen;
