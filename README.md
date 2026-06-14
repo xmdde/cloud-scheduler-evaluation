@@ -12,13 +12,17 @@ Projekt korzysta z `make` oraz kompilatora `g++`.
 
 ### 1. Generowanie danych wejściowych
 Tryb tworzy 50 plików `.csv` z danymi dla wybranego scenariusza.
-- **Komenda:** `./cloud-sim --generate <scenariusz>`
+```
+./cloud-sim --generate <scenariusz>
+```
 - **Scenariusze:** `realistic`, `low`, `high`, `spiky`
 - **Przykład:** `./cloud-sim --generate spiky`
 
 ### 2. Uruchomienie symulacji
 Tryb wykonuje obliczenia dla przygotowanego pliku wejściowego przy użyciu dostępnych algorytmów.
-- **Komenda:** `./cloud-sim --sim <plik_wejsciowy.csv> [prefiks_wynikow]`
+```
+./cloud-sim --sim <plik_wejsciowy.csv> [prefiks_wynikow]
+```
 - **Przykład:** `./cloud-sim --sim workloads/spiky/seed_0.csv test_1`
 
 Po zakończeniu symulacji program generuje raport zawierający kluczowe metryki wydajności dla każdego algorytmu, obejmujące zużycie energii, całkowity czas trwania symulacji, średni czas oczekiwania zadań oraz poziom utylizacji aktywnych węzłów.
